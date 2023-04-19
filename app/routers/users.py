@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.models.users import userModel
 
 router = APIRouter()
 #print(db)
@@ -6,4 +7,4 @@ router = APIRouter()
 
 @router.get("/hello/{name}")
 async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+    return {"message": userModel}
