@@ -1,12 +1,9 @@
 from typing import List
-
 from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.responses import JSONResponse
-
-from ..dependencies import db
-from ..models.user import User
+from .. import User, db
 
 router = APIRouter()
 
