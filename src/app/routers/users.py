@@ -19,7 +19,7 @@ async def create_student(student: User = Body(...)):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_student)
 
 
-@router.get("/", response_description="List all students", response_model=List[User])
+@router.get("/test", response_description="List all students", response_model=List[User])
 async def list_students():
     students = await db["user"].find().to_list(1000)
     return students
