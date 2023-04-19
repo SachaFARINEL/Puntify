@@ -8,9 +8,9 @@ services:
     volumes:
       - /data/db
   python:
-    build: ./app
+    build: ./src
     volumes:
-      - ./app:/usr/src/app
+      - ./src/app:/code/app
     ports:
       - "80:80"
     links:
