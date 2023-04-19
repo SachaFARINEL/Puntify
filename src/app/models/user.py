@@ -1,7 +1,7 @@
 from bson import ObjectId
 from pydantic import BaseModel, Field
 
-from .. import PyObjectId
+from src.app.ressources.utils import PyObjectId
 
 
 class User(BaseModel):
