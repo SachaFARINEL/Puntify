@@ -1,7 +1,7 @@
 version: '3'
 services:
   mongodb:
-    container_name: mongo
+    container_name: mongo-puntify
     image: mongo
     ports:
       - "27017:27017"
@@ -12,7 +12,7 @@ services:
     volumes:
       - ./app:/usr/src/app
     ports:
-      - "8000:8000"
+      - "80:80"
     links:
       - mongodb
     depends_on:
