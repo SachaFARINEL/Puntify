@@ -8,7 +8,7 @@ from .. import User, db
 router = APIRouter()
 
 
-@router.post("/", response_description="Add new student", response_model=User)
+@router.post("/create", response_description="Add new student", response_model=User)
 async def create_student(student: User = Body(...)):
     student = jsonable_encoder(student)
     new_student = await db["user"].insert_one(student)
