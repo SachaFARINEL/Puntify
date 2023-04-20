@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}Add a track{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <div class="file has-name is-boxed is-fullwidth">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="mp3file">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Drag and drop an MP3 file here, or click to browse
+                                </span>
+                            </span>
+                            <span class="file-name">
+                                No file selected
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+    const fileInput = document.querySelector('input[type="file"]');
+
+    fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        const fileName = file.name;
+        const fileLabel = document.querySelector('.file-name');
+        fileLabel.textContent = fileName;
+        console.log(file)
+        const formData = new FormData();
+        formData.append('mp3file', file);
+
+        const response = await fetch('/formTrack', {
+            method: 'POST',
+            body: formData,
+        });
+
+        console.log(await response.json())
+    });
+</script>
+{% endblock %}

@@ -1,12 +1,25 @@
 import os
 from datetime import timedelta
 from typing import Annotated
-from fastapi import APIRouter, Depends
+from uuid import uuid4
+
+from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
-from ..models import User, authenticate_user
+from fastapi.responses import HTMLResponse, RedirectResponse
+
+from ..models import authenticate_user, User
 from ..internal import create_access_token
+from ..dependencies import templates
+from ..ressources.session import SessionData, backend, cookie
+
 
 router = APIRouter()
+
+
+@router.get("/login", response_class=HTMLResponse)
+async def root(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse("login.html", context)
 
 
 @router.post('/login', response_description="Puntify connection")
@@ -18,4 +31,12 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
         data={"sub": user["username"]}, expires_delta=access_token_expires
     )
 
-    return access_token
+    response = RedirectResponse(url='/admin', status_code=status.HTTP_303_SEE_OTHER)
+
+    session = uuid4()
+    data = SessionData(token=access_token)
+
+    await backend.create(session, data)
+    cookie.attach_to_response(response, session)
+
+    return response

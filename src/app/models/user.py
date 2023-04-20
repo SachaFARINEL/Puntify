@@ -1,20 +1,18 @@
-from pprint import pprint
-from typing import Annotated
 import os
 
+from typing import Annotated
 from bson import ObjectId
 from fastapi import HTTPException, Depends, status
 from pydantic import BaseModel, Field
 from pydantic import EmailStr
-from pydantic.types import SecretStr
 
 from .track import Track
 from jose import JWTError, jwt
 from ..ressources import PyObjectId
-from ..dependencies import oauth2_scheme
 from ..config import db
 from dotenv import load_dotenv
 from ..internal import pwd_context
+from ..ressources.session import SessionData, verifier
 
 load_dotenv()
 
@@ -40,30 +38,42 @@ class User(BaseModel):
 
     class Config:
         json_encoders = {ObjectId: str}
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+class UserCreate(BaseModel):
+    username: str
+    firstName: str
+    lastName: str
+    email: str
+    passwd: str
+    passwConfirmation: str
+
+
+async def get_current_user(session_data: SessionData = Depends(verifier)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
-        payload = jwt.decode(token, os.environ["SECRET_KEY"], algorithms=os.environ["ALGORITHM"])
+        payload = jwt.decode(session_data.token, os.environ["SECRET_KEY"], algorithms=os.environ["ALGORITHM"])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(token_data.id)
+    user = await get_user(token_data.username)
     if user is None:
         raise credentials_exception
     return user
 
 
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
-    if current_user.disabled:
+    if not current_user["flag_status"]:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
@@ -75,13 +85,12 @@ async def get_user(username: str):
 async def authenticate_user(username: str, password: str):
     user = await get_user(username)
 
-    if not user or not verify_password(password, user["hashed_password"]):
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    if not user or not verify_password(password, user["hashed_passwd"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return user
 

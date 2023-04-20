@@ -11,6 +11,7 @@ services:
     build: ./src
     volumes:
       - ./src/app:/code/app
+      - ./src/requirements.txt:/code/requirements.txt
     ports:
       - "80:80"
     links:
