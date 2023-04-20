@@ -50,10 +50,12 @@ async def root(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("signIn.html", context)
 
+
 @app.get("/formTrack", response_class=HTMLResponse)
 async def root(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("formTrack.html", context)
+
 
 @app.post("/formTrack")
 async def root(request: Request):

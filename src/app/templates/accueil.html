@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% block style %} <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">{% endblock %}
 {% block title %}Puntify{% endblock %}
 
 {% block content %}
