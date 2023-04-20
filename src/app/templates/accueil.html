@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block style %} <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">{% endblock %}
+{% block style %} <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">{% endblock %}
 {% block title %}Puntify{% endblock %}
 
 {% block content %}
@@ -7,7 +7,7 @@
     <div class="hero-body">
         <div class="container has-text-centered">
             <h1 class="title" style="font-size: 6rem">Puntify</h1>
-            <a href="/auth/login">Login</a>
+            <a href="{{ url_for('login') }}">Login</a>
             <a href="/signIn">SignIn</a>
         </div>
     </div>

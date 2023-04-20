@@ -52,13 +52,13 @@ async def root(request: Request):
 
 
 @app.get("/formTrack", response_class=HTMLResponse)
-async def root(request: Request):
+async def getFormTrack(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("formTrack.html", context)
 
 
 @app.post("/formTrack")
-async def root(request: Request):
+async def postFormTrack(request: Request):
     formData = await request.form()
     print(formData)
     return 'ok'

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block style %}
-    <link href="{{ url_for('static', path='/register.css') }}" rel="stylesheet">{% endblock %}
-{% block title %}Test{% endblock %}
+    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">{% endblock %}
+{% block title %}Log in{% endblock %}
 
 {% block content %}
     <section class="container">
@@ -10,13 +10,13 @@
                 <div class="columns">
                     <div class="column left">
                         <h1 class="title is-1">Puntify</h1>
-                        <h2 class="subtitle colored is-4">Create the perfect playlist for any occasion, and enjoy
+                        <h2 class="subtitle colored is-4 has-text-justified">Create the perfect playlist for any occasion, and enjoy
                             high-quality audio streaming.</h2>
-                        <p>The app features a user-friendly interface, with a large collection of songs, albums, and
+                        <p class="has-text-justified">The app features a user-friendly interface, with a large collection of songs, albums, and
                             playlists to choose from.</p>
                     </div>
                     <div class="column right has-text-centered">
-                        <h1 class="title is-4">Log on today</h1>
+                        <h1 class="title is-4">Log in today</h1>
                         <p class="description">#ERRMSG if Needed</p>
                         <form method="post">
                             <div class="field">
