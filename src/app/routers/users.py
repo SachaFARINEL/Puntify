@@ -3,9 +3,8 @@ from fastapi import APIRouter, Body
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.responses import JSONResponse
-
-from src.app.config.dbConnect import db
-from src.app.models.user import User
+from ..config import db
+from ..models import User
 
 router = APIRouter()
 

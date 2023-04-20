@@ -10,7 +10,7 @@ templates = Jinja2Templates(directory="app/templates")
 app = FastAPI()
 app.include_router(users.router)
 app.include_router(tracks.router)
-app.mount("../static", StaticFiles(directory="app/static"), name="static")
+# app.mount("../static", StaticFiles(directory="app/static"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse)
