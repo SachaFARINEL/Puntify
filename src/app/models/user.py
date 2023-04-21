@@ -23,17 +23,16 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    email: str | None = None
 
 
 class User(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    username: str
     firstName: str
     lastName: str
     email: EmailStr
     hashed_passwd: str
-    bookmarks: list[Track] | None = Field(None, alias="Track")
+    tracks: list[Track] | None = Field(None, alias="tracks")
     flag_status: bool | None = 1
 
     class Config:
@@ -43,7 +42,6 @@ class User(BaseModel):
 
 
 class UserCreate(BaseModel):
-    username: str
     firstName: str
     lastName: str
     email: str
@@ -60,13 +58,13 @@ async def get_current_user(session_data: SessionData = Depends(verifier)):
 
     try:
         payload = jwt.decode(session_data.token, os.environ["SECRET_KEY"], algorithms=os.environ["ALGORITHM"])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        if email is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(email=email)
     except JWTError:
         raise credentials_exception
-    user = await get_user(token_data.username)
+    user = await get_user(token_data.email)
     if user is None:
         raise credentials_exception
     return user
@@ -78,17 +76,17 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
     return current_user
 
 
-async def get_user(username: str):
-    return await db["user"].find_one({"username": username})
+async def get_user(email: str):
+    return await db["user"].find_one({"email": email})
 
 
-async def authenticate_user(username: str, password: str):
-    user = await get_user(username)
+async def authenticate_user(email: str, password: str):
+    user = await get_user(email)
 
     if not user or not verify_password(password, user["hashed_passwd"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

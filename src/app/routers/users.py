@@ -20,7 +20,6 @@ async def register(userCreate: UserCreate, response: Response):
         raise HTTPException(status_code=400, detail="Email already exists")
     hashed_passwd = pwd_context.hash(userCreate.passwd)
     user = User(
-        username=userCreate.username,
         firstName=userCreate.firstName,
         lastName=userCreate.lastName,
         email=EmailStr(userCreate.email),
@@ -33,7 +32,7 @@ async def register(userCreate: UserCreate, response: Response):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    token = create_access_token(data={"sub": created_user["username"]})
+    token = create_access_token(data={"sub": created_user["email"]})
 
     session = uuid4()
     data = SessionData(token=token)

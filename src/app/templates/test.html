@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block style %}
+    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">{% endblock %}
+{% block title %}Create an account{% endblock %}
+
+{% block content %}
+    <nav class="navbar is-fixed-top has-shadow">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <h1 class="title is-4">Puntify</h1>
+            </a>
+        </div>
+    </nav>
+    <section class="hero is-fullheight">
+        <div class="hero-body column">
+            <div class="column is-4 is-offset-4 register">
+                <div class="column p-6">
+
+                    <div class="has-text-centered">
+                        <h1 class="title is-4">Create an account</h1>
+                        <p class="description">#ERRMSG if Needed</p>
+                        <form method="post">
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="First name" name="firstName"
+                                               required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="Last name" name="lastName"
+                                               required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="email" placeholder="Email" name="email" required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="password" placeholder="Password" name="passwd" required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="Confirmation" name="passwConfirmation" required>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="button is-block is-primary is-fullwidth is-medium mt-4">Submit</button>
+                            <br/>
+                            <small><em>Already have an account ? </em><a href="#">Log in</a></small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {#<section class="hero is-fullheight columns is-vcentered">
+        <div class="hero-body column is-8 is-offset-2 ">
+            <div class="column left has-text-centered">
+                <h1 class="title is-1">Puntify</h1>
+                <h2 class="subtitle colored is-4 ">Create the perfect playlist for any occasion, and enjoy
+                    high-quality audio streaming.</h2>
+                <p>The app features a user-friendly interface, with a large collection of songs, albums, and
+                    playlists to choose from.</p>
+            </div>
+            <div class="column right has-text-centered">
+                <h1 class="title is-1">Puntify</h1>
+                <h2 class="subtitle colored is-4 ">Create the perfect playlist for any occasion, and enjoy
+                    high-quality audio streaming.</h2>
+                <p>The app features a user-friendly interface, with a large collection of songs, albums, and
+                    playlists to choose from.</p>
+            </div>
+        </div>
+    </section>#}
+
+{% endblock %}

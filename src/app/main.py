@@ -5,10 +5,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .dependencies import templates
-from .routers import users, tracks, auth, admin
+from .routers import users, tracks, auth, admin, home
 
 app = FastAPI()
 
+app.include_router(
+    home.router,
+    prefix="/home"
+)
 app.include_router(
     users.router,
     prefix="/users"
@@ -46,19 +50,12 @@ async def root(request: Request):
 
 
 @app.get("/signIn", response_class=HTMLResponse)
-async def root(request: Request):
+async def sign_in(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("signIn.html", context)
 
 
-@app.get("/formTrack", response_class=HTMLResponse)
-async def getFormTrack(request: Request):
+@app.get("/test", response_class=HTMLResponse)
+async def test(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("formTrack.html", context)
-
-
-@app.post("/formTrack")
-async def postFormTrack(request: Request):
-    formData = await request.form()
-    print(formData)
-    return 'ok'
+    return templates.TemplateResponse("test.html", context)

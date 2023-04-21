@@ -5,7 +5,6 @@ submitBtn.addEventListener('click', async (event) => {
     event.preventDefault();
 
     const user = {
-        username: signInForm.username.value,
         firstName: signInForm.firstName.value,
         lastName: signInForm.lastName.value,
         email: signInForm.email.value,

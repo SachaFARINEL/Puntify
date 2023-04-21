@@ -26,27 +26,53 @@
                 </div>
             </div>
         </div>
+        <button class="lauchMusic" onclick="test()">Lauch</button>
+        <button class="stopMusic" id="stopMusic">Lauch</button>
+
     </section>
 
 
     <script>
-    const fileInput = document.querySelector('input[type="file"]');
+        const fileInput = document.querySelector('input[type="file"]');
 
-    fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        const fileName = file.name;
-        const fileLabel = document.querySelector('.file-name');
-        fileLabel.textContent = fileName;
-        console.log(file)
-        const formData = new FormData();
-        formData.append('mp3file', file);
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            const fileName = file.name;
+            const fileLabel = document.querySelector('.file-name');
+            fileLabel.textContent = fileName;
+            console.log(file)
+            const formData = new FormData();
+            formData.append('file', file);
 
-        const response = await fetch('/formTrack', {
-            method: 'POST',
-            body: formData,
+            const response = await fetch('/tracks', {
+                method: 'POST',
+                body: formData,
+            });
+
+            console.log(await response.json())
         });
+        let context;
 
-        console.log(await response.json())
-    });
-</script>
+        async function test() {
+            await fetch('/tracks/64429343728d24d06ce01b75')
+                .then(response => {
+                    response.arrayBuffer().then(buffer => {
+                        context = new AudioContext();
+                        context.decodeAudioData(buffer, decodedData => {
+                            const sourceNode = context.createBufferSource();
+                            sourceNode.buffer = decodedData;
+                            sourceNode.connect(context.destination);
+                            sourceNode.start();
+                            document.getElementById('stopMusic').addEventListener('click', () => {
+                                sourceNode.stop()
+                            })
+                        }, error => {
+                            console.log('Une erreur est survenue lors du décodage des données audio', error);
+                        });
+                    });
+                })
+
+        }
+
+    </script>
 {% endblock %}
