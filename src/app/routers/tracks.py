@@ -39,33 +39,16 @@ async def add_track(file: UploadFile = File(...)):
     return 'ok'
 
 
-#
-# # Titre de la chanson
-# print("Titre :", audio.get("TIT2", "Unknown"))
-#
-# # Artiste
-# print("Artiste :", audio.get("TPE1", "Unknown"))
-#
-# # Album
-# print("Album :", audio.get("TALB", "Unknown"))
-#
-# # Année de sortie
-# print("Année de sortie :", audio.get("TDRC", "Unknown"))
-#
-# # Durée de la chanson (en secondes)
-# print("Durée :", int(audio.info.length))
-#
-# # Genre
-# print("Genre :", audio.get("TCON", "Unknown"))
-#
-# # Nombre de pistes sur l'album
-# print("Nombre de pistes :", audio.get("TRCK", "Unknown"))
+@router.post('/getDuration', response_description="Get the duration of a track")
+async def get_duration(file: UploadFile = File(...)):
+    audio = MP3(file.file)
+    return int(audio.info.length)
 
 
 @router.get("/{track_id}", response_description="Get all tracks", response_class=FileResponse)
 async def get_tracks(track_id: str):
     track = await db["tracks"].find_one({"_id": track_id})
-    #with open('audio.mp3', 'wb') as f:
+    # with open('audio.mp3', 'wb') as f:
     #    f.write(track["music"])
     with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as fp:
         fp.write(track["music"])
