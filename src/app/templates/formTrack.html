@@ -51,13 +51,12 @@
 
             console.log(await response.json())
         });
-        let context;
 
         async function test() {
             await fetch('/tracks/64429343728d24d06ce01b75')
                 .then(response => {
                     response.arrayBuffer().then(buffer => {
-                        context = new AudioContext();
+                        let context = new AudioContext();
                         context.decodeAudioData(buffer, decodedData => {
                             const sourceNode = context.createBufferSource();
                             sourceNode.buffer = decodedData;

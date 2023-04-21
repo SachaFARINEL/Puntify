@@ -4,9 +4,9 @@
 {% block title %}Log in{% endblock %}
 
 {% block content %}
-    <section class="container is-primary">
-        <div class="columns is-multiline">
-            <div class="column is-8 is-offset-2 register">
+    <section class="hero is-fullheight">
+        <div class="hero-body columns is-multiline">
+            <div class="column is-6 is-offset-3 cardStyle">
                 <div class="columns">
                     <div class="column left has-text-centered">
                         <h1 class="title is-1">Puntify</h1>
@@ -17,12 +17,14 @@
                     </div>
                     <div class="column right has-text-centered">
                         <h1 class="title is-4">Log in today</h1>
-                        <p class="description">#ERRMSG if Needed</p>
+                        <p class="errors"></p>
                         <form method="post">
+                        {#<form>#}
                             <div class="field">
                                 <div class="control">
                                     <label>
-                                        <input class="input is-medium" type="text" placeholder="Email" name="username" required>
+                                        <input class="input is-medium" type="text" placeholder="Email" name="username"
+                                               required>
                                     </label>
                                 </div>
                             </div>
@@ -30,18 +32,51 @@
                             <div class="field">
                                 <div class="control">
                                     <label>
-                                        <input class="input is-medium" type="text" placeholder="Password" name="password" required>
+                                        <input class="input is-medium" type="password" placeholder="Password"
+                                               name="password" required>
                                     </label>
                                 </div>
                             </div>
                             <button class="button is-block is-primary is-fullwidth is-medium">Submit</button>
                             <br/>
-                            <small><em>Sign up.</em></small>
+                            <small>
+                                <em>No account yet ? </em>
+                                <a href="{{ url_for('sign_in') }}">Sign up</a>
+                            </small>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    {#<script>
+        const loginForm = document.querySelector('form');
+        const errorContainer = document.querySelector('.errors');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            const url = '/auth/login';
+            const options = {
+                method: 'POST',
+                body: formData,
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                console.log(data)
+                if (data.detail) {
+                    errorContainer.classList.add('has-text-danger');
+                    errorContainer.textContent = data.error;
+                } else {
+                    // Redirect to dashboard or home page
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    </script>#}
 {% endblock %}
 

@@ -52,10 +52,4 @@ async def root(request: Request):
 @app.get("/signIn", response_class=HTMLResponse)
 async def sign_in(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("signIn.html", context)
-
-
-@app.get("/test", response_class=HTMLResponse)
-async def test(request: Request):
-    context = {"request": request}
-    return templates.TemplateResponse("test.html", context)
+    return templates.TemplateResponse("signUp.html", context)
