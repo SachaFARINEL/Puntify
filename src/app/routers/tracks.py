@@ -1,8 +1,8 @@
 import tempfile
 from typing import Annotated
-from fastapi import APIRouter, Body, Depends, status, Request, File, UploadFile
+from fastapi import APIRouter, Body, Depends, status, Request, File, UploadFile, Form, HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import JSONResponse, FileResponse
+from starlette.responses import JSONResponse, FileResponse, Response, StreamingResponse
 
 from ..models import User, Track
 from ..models.user import get_current_active_user
@@ -39,21 +39,61 @@ async def add_track(file: UploadFile = File(...)):
     return 'ok'
 
 
+@router.post("/test", response_description="Add a track")
+async def add_track(
+        file: UploadFile = File(...),
+        fileName: str = Form(...),
+        trackName: str = Form(...),
+        artistName: str = Form(...),
+        duration: int = Form(...),
+        cover: str = Form(...)):
+    file.file.seek(0)
+    file_bytes = file.file.read()
+
+    if not all([fileName, trackName, artistName, duration, cover]):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing required form data"
+        )
+
+    track = Track(
+        fileName=fileName,
+        trackName=trackName,
+        artistName=artistName,
+        duration=duration,
+        cover=cover,
+        music=bytes()
+    )
+
+    track = jsonable_encoder(track)
+    track["music"] = file_bytes
+
+    new_track = await db["tracks"].insert_one(track)
+
+    if not new_track:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to save track to database"
+        )
+
+    return Response(content="Music has been successfully saved", status_code=200)
+
+
 @router.post('/getDuration', response_description="Get the duration of a track")
 async def get_duration(file: UploadFile = File(...)):
     audio = MP3(file.file)
     return int(audio.info.length)
 
 
-@router.get("/{track_id}", response_description="Get all tracks", response_class=FileResponse)
+@router.get("/{track_id}", response_description="Get track", response_class=StreamingResponse)
 async def get_tracks(track_id: str):
     track = await db["tracks"].find_one({"_id": track_id})
-    # with open('audio.mp3', 'wb') as f:
-    #    f.write(track["music"])
-    with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as fp:
-        fp.write(track["music"])
-        audio = fp.name
-    return audio
+
+    async def music_stream():
+        for i in range(10):
+            yield track["music"]
+
+    return StreamingResponse(music_stream())
 
 
 @router.get("/", response_description="Get all tracks")

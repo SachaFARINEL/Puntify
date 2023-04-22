@@ -11,7 +11,6 @@ submitBtn.addEventListener('click', async (event) => {
         passwd: signInForm.passwd.value,
         passwConfirmation: signInForm.passwConfirmation.value,
     }
-    console.log(user)
 
     const response = await fetch('/users/register', {
         method: 'POST',

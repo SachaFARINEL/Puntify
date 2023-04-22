@@ -2,7 +2,7 @@
 {% block style %}
     <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">
 {% endblock %}
-{% block title %}Create an account{% endblock %}
+{% block title %}Add a track{% endblock %}
 
 {% block content %}
     <section class="hero is-fullheight">
@@ -11,18 +11,18 @@
                 <div class="column p-6">
 
                     <div class="has-text-centered">
-                        <h1 class="title is-4">Add a track</h1>
-                        <p id="error" class="is-invisible"></p>
+                        <h1 class="trackTitle">Add a track</h1>
+                        <p id="error" class="is-invisible error"></p>
                         <form>
                             <div class="field">
-                                <label class="label">Select a file:</label>
+                                <label class="label">Select a file</label>
                                 <div class="control">
                                     <div class="columns">
                                         <div class="column is-4 is-offset-4 has-text-centered">
-                                            <div id="dropZone" class="box has-text-centered" >
+                                            <div id="dropZone" class="zone has-text-centered">
                                                 <div class="content">
                                                     <span class="icon is-large"><i id="iconDropZone"
-                                                            class="fa-solid fa-file-arrow-up fa-2xl"></i></span>
+                                                                                   class="fa-solid fa-file-arrow-up fa-2xl"></i></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -70,32 +70,30 @@
                             </div>
 
                             <div class="field">
-                                <label class="label">Select a cover:</label>
+                                <label class="label">Click for cover</label>
                                 <div class="control">
-                                    <div class="columns">
+                                    <div class="columns ">
                                         <div class="column is-4 is-offset-4 has-text-centered">
-                                            <div id="coverZone" class="box has-text-centered">
-                                                <div class="content">
-                                                    <span class="icon is-large"><i
-                                                            class="fa-solid fa-file-arrow-up fa-2xl"></i></span>
-                                                </div>
+                                            <div id="coverFM" class="content zone search">
+                                                    <span class="icon is-large"><i class="fa-solid fa-hand-point-up fa-2xl"></i></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <button class="button is-block is-primary is-fullwidth is-medium">Submit</button>
+                                <button id="submitButton" class="button is-block is-primary is-fullwidth is-medium mt-4">
+                                    Submit
+                                </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    <input class="is-hidden" type="text" name="duration" id="trackDuration" >
-    <input class="is-hidden" type="file" name="cover" id="cover" >
+        <input class="is-hidden" type="text" name="duration" id="duration">
+        <input class="is-hidden" type="file" name="cover" id="cover">
     </section>
 {% endblock %}
 
 {% block script %}
-    <script src="{{ url_for('static', path='/js/dropzone.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/addTrack.js') }}"></script>
 {% endblock %}
 
