@@ -55,6 +55,7 @@ async function handleSubmit(event) {
 
 async function getCover() {
     if (musicTitle.value !== '' && artistName.value !== '') {
+        updateComponent(error, ['is-invisible'])
         let apiKey = '6b690048ba5bd85baa1563b8c8048a8f'
         let artist = artistName.value
         let track = musicTitle.value
