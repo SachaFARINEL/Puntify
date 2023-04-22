@@ -33,7 +33,7 @@ async function handleSubmit(event) {
         formData.append('duration', duration.value);
         formData.append('cover', imgElementUrl);
 
-        const response = await fetch("/tracks", {
+        const response = await fetch("/tracks/add", {
             method: "POST",
             body: formData
         });

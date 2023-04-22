@@ -19,13 +19,13 @@ async def add_favorite_track(current_user: Annotated[User, Depends(get_current_a
     return JSONResponse(status_code=status.HTTP_201_CREATED, content="")
 
 
-@router.get("/", response_description="get add a track form")
+@router.get("/add", response_description="get add a track form")
 async def get_add_track_form(request: Request):
     context = {'request': request}
     return templates.TemplateResponse("addTrack.html", context)
 
 
-@router.post("/", response_description="Add a track")
+@router.post("/add", response_description="Add a track")
 async def post_add_track(
         file: UploadFile = File(...),
         fileName: str = Form(...),
