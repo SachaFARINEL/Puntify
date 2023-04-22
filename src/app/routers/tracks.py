@@ -19,28 +19,14 @@ async def add_favorite_track(current_user: Annotated[User, Depends(get_current_a
     return JSONResponse(status_code=status.HTTP_201_CREATED, content="")
 
 
+@router.get("/", response_description="get add a track form")
+async def get_add_track_form(request: Request):
+    context = {'request': request}
+    return templates.TemplateResponse("addTrack.html", context)
+
+
 @router.post("/", response_description="Add a track")
-async def add_track(file: UploadFile = File(...)):
-    audio = MP3(file.file)
-    file.file.seek(0)
-    file_bytes = file.file.read()
-    track = Track(
-        trackName='trackName',
-        artistName='artistName',
-        duration=int(audio.info.length),
-        cover='cover',
-        music=bytes()
-    )
-
-    track = jsonable_encoder(track)
-
-    track["music"] = file_bytes
-    new_track = await db["tracks"].insert_one(track)
-    return 'ok'
-
-
-@router.post("/test", response_description="Add a track")
-async def add_track(
+async def post_add_track(
         file: UploadFile = File(...),
         fileName: str = Form(...),
         trackName: str = Form(...),
@@ -94,9 +80,3 @@ async def get_tracks(track_id: str):
             yield track["music"]
 
     return StreamingResponse(music_stream())
-
-
-@router.get("/", response_description="Get all tracks")
-async def trackForm(request: Request):
-    context = {'request': request}
-    return templates.TemplateResponse("formTrack.html", context)

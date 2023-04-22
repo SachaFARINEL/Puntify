@@ -58,4 +58,4 @@ async def sign_in(request: Request):
 @app.get("/test", response_class=HTMLResponse)
 async def test(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("test.html", context)
+    return templates.TemplateResponse("addTrack.html", context)
