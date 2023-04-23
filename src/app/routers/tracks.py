@@ -2,16 +2,25 @@ import tempfile
 from typing import Annotated
 from fastapi import APIRouter, Body, Depends, status, Request, File, UploadFile, Form, HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import JSONResponse, FileResponse, Response, StreamingResponse
+from starlette.responses import JSONResponse, FileResponse, Response, StreamingResponse, HTMLResponse
 
 from ..models import User, Track
 from ..models.user import get_current_active_user
 from ..dependencies import templates
 from mutagen.mp3 import MP3
 from ..config import db
+from ..ressources.utils import remove_prefix_zero
 
 router = APIRouter()
 
+
+@router.get("/test", response_class=HTMLResponse)
+async def test(request: Request):
+    tracks = await db["tracks"].find({}, {'music': 0}).to_list(10)
+    for track in tracks:
+        track['duration'] = remove_prefix_zero(track['duration'])
+    context = {'request': request, 'tracks': tracks}
+    return templates.TemplateResponse("test.html", context)
 
 @router.post("/user", response_description="Add music to the user's favorites", response_model=User)
 async def add_favorite_track(current_user: Annotated[User, Depends(get_current_active_user)], track: Track = Body(...)):

@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block style %}
+    <link href="{{ url_for('static', path='/css/test.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">
+{% endblock %}
+{% block title %}test{% endblock %}
+
+{% block content %}
+    <div class="columns is-multiline">
+    {% for track in tracks %}
+
+    <div class="column is-2">
+                <div class="spotify-music-container">
+                    <div class="spotify-music">
+                        <div class="card" data-music-id="{{ track['_id'] }}">
+                            <div class="overlayer">
+                                <i class="fa-regular fa-circle-play fa-sm" style="color: #ffffff;"></i>
+                            </div>
+                            <img src="{{ track['cover'] }}"
+                                 alt="coverFor{{ track['trackName'] }}-{{ track['artistName'] }}">
+                        </div>
+                        <div class="spotify-music-details">
+                            <div class="spotify-music-title">{{ track['trackName']}}</div>
+                            <div class="spotify-music-artist">{{ track['artistName']}}</div>
+                            <div class="spotify-music-duration">{{ track['duration']}}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    {% endfor %}
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+

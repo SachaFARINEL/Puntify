@@ -203,5 +203,9 @@ function formatDuration(totalSeconds) {
     let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
     let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
 
-    return formattedHours + ":" + formattedMinutes + ":" + formattedSeconds;
+    if (formattedHours === "00") {
+        return formattedMinutes + ":" + formattedSeconds;
+    } else {
+        return formattedHours + ":" + formattedMinutes + ":" + formattedSeconds;
+    }
 }

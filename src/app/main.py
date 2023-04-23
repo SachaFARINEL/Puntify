@@ -3,7 +3,6 @@ from fastapi.exception_handlers import http_exception_handler, request_validatio
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-
 from .dependencies import templates
 from .routers import users, tracks, auth, admin, home
 
@@ -53,9 +52,3 @@ async def root(request: Request):
 async def sign_in(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("signUp.html", context)
-
-
-@app.get("/test", response_class=HTMLResponse)
-async def test(request: Request):
-    context = {"request": request}
-    return templates.TemplateResponse("addTrack.html", context)

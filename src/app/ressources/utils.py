@@ -15,3 +15,9 @@ class PyObjectId(ObjectId):
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
+
+
+def remove_prefix_zero(time_str):
+    if time_str.startswith("00:"):
+        time_str = time_str[3:]
+    return time_str
