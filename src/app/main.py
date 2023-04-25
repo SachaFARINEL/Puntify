@@ -80,3 +80,9 @@ async def test(request: Request):
     context = {"request": request, "users_count": users_count, "tracks_count": tracks_count,
                "total_listening_minutes": total_listening_minutes, "num_unique_tags": num_unique_tags}
     return templates.TemplateResponse("testAdmin.html", context)
+
+
+@app.get("/testLandingPage", response_class=HTMLResponse)
+async def root(request: Request):
+    context = {"request": request}
+    return templates.TemplateResponse("testLandingPage.html", context)

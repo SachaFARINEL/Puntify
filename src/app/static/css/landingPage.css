@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&display=swap');
+
+@media (max-width: 500px) {
+    .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+    }
+}
+
+.titleLogo {
+    font-family: 'Merriweather', monospace !important;
+    font-size: 58px !important;
+    font-weight: 800 !important;
+    line-height: 64px !important;
+}
+
+.titled {
+    font-family: 'Merriweather', serif !important;
+    font-size: 58px !important;
+    font-weight: 400 !important;
+    line-height: 64px !important;
+}
+
+.subtitled {
+    font-family: 'Merriweather', serif !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 36px !important;
+}
+
+#logo {
+    max-width: 2000px; /* Remplacez 200px par la taille souhaitée */
+    height: auto;
+}
