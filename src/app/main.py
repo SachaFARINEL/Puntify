@@ -63,7 +63,7 @@ async def sign_in(request: Request):
 
 
 @app.get("/biblio", response_class=HTMLResponse)
-async def root(request: Request):
+async def get_biblio(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("formTrack.html", context)
 

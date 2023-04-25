@@ -5,6 +5,9 @@
 
 {% block content %}
     <section class="hero is-fullheight">
+    <div class="back-btn">
+            <a href="{{ url_for('get_landing') }}"><img src="{{ url_for('static', path='/img/arrow_left.png') }}"></a>
+        </div>
         <div class="hero-body column">
             <div class="column is-4 is-offset-4 cardStyle">
                 <div class="column p-6">

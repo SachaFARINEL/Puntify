@@ -4,7 +4,12 @@
 {% block title %}Log in{% endblock %}
 
 {% block content %}
+
     <section class="hero is-fullheight">
+        <div class="back-btn">
+            <a href="{{ url_for('get_landing') }}"><img src="{{ url_for('static', path='/img/arrow_left.png') }}"></a>
+        </div>
+
         <div class="hero-body columns is-multiline">
             <div class="column is-6 is-offset-3 cardStyle">
                 <div class="columns">

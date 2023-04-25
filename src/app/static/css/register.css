@@ -118,3 +118,9 @@ input:focus {
     border: 1px solid #2196f3;
 }
 
+.back-btn {
+    position: absolute;
+    left: 3rem;
+    top: 3rem;
+}
+
