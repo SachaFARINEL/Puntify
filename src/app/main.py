@@ -45,10 +45,15 @@ async def validation_exception_handler(request, exc):
     return await request_validation_exception_handler(request, exc)
 
 
+@app.exception_handler(404)
+async def custom_404_handler(request, __):
+    return templates.TemplateResponse("404.html", {"request": request})
+
+
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
+async def get_landing(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("accueil.html", context)
+    return templates.TemplateResponse("landing.html", context)
 
 
 @app.get("/signIn", response_class=HTMLResponse)
@@ -80,9 +85,3 @@ async def test(request: Request):
     context = {"request": request, "users_count": users_count, "tracks_count": tracks_count,
                "total_listening_minutes": total_listening_minutes, "num_unique_tags": num_unique_tags}
     return templates.TemplateResponse("testAdmin.html", context)
-
-
-@app.get("/testLandingPage", response_class=HTMLResponse)
-async def root(request: Request):
-    context = {"request": request}
-    return templates.TemplateResponse("testLandingPage.html", context)
