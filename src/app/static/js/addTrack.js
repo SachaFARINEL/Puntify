@@ -1,3 +1,5 @@
+import {changeIconColor, formatDuration, isAudioFile, updateComponent, preventDefaultBehavior} from "./utils.js";
+
 const dropZone = document.getElementById('dropZone');
 const error = document.getElementById('error');
 const iconDropZone = document.getElementById('iconDropZone');
@@ -10,8 +12,8 @@ let artistName = document.querySelector('input[name="artistName"]')
 let trackDuration = document.querySelector('input[name="trackDuration"]')
 let duration = document.querySelector('input[name="duration"]')
 let imgElementUrl = null
-
 let mp3 = null
+let tags = null
 
 dropZone.addEventListener('dragover', addDragOverClass);
 dropZone.addEventListener('dragleave', removeDragOverClass);
@@ -20,7 +22,7 @@ dropZone.addEventListener('click', handleDropClick);
 
 submitButton.addEventListener('click', handleSubmit);
 
-coverFM.addEventListener('click', getCover);
+coverFM.addEventListener('click', getCoverAndTags);
 
 async function handleSubmit(event) {
     preventDefaultBehavior(event);
@@ -28,10 +30,11 @@ async function handleSubmit(event) {
         const formData = new FormData();
         formData.append('file', mp3);
         formData.append('fileName', fileName.value);
-        formData.append('trackName', musicTitle.value);
-        formData.append('artistName', artistName.value);
+        formData.append('trackName', musicTitle.value.charAt(0).toUpperCase() + musicTitle.value.slice(1));
+        formData.append('artistName', artistName.value.charAt(0).toUpperCase() + artistName.value.slice(1));
         formData.append('duration', duration.value);
         formData.append('cover', imgElementUrl);
+        formData.append('tags', tags);
 
         const response = await fetch("/tracks/add", {
             method: "POST",
@@ -53,7 +56,7 @@ async function handleSubmit(event) {
     }
 }
 
-async function getCover() {
+async function getCoverAndTags() {
     if (musicTitle.value !== '' && artistName.value !== '') {
         updateComponent(error, ['is-invisible'])
         let apiKey = '6b690048ba5bd85baa1563b8c8048a8f'
@@ -63,15 +66,26 @@ async function getCover() {
         const response = await fetch(lastFMUrl, {
             method: 'GET'
         }).then(response => response.json())
-        if (response && response.track && response.track.album && response.track.album.image && response.track.album.image[3]) {
+
+        if (response?.track?.album?.image[3]) {
             const coverUrl = response.track.album.image[3]['#text']
             coverFM.innerHTML = `<img src="${coverUrl}" alt="Cover Image">`;
         } else {
             const shadowImg = 'https://t4.ftcdn.net/jpg/05/14/20/15/360_F_514201525_bdJOhRiJjHOwPc7I0Dg3VFxSsI0FHoOq.jpg'
             coverFM.innerHTML = `<img src="${shadowImg}" alt="No image">`;
-            updateComponent(error, ['information'], 'Possible incorrect information')
+            updateComponent(error, ['information'], 'Track not found')
         }
         imgElementUrl = document.querySelector('#coverFM img').src;
+
+        if (response?.track?.toptags?.tag) {
+
+            let tagsList = []
+            for (let i = 0; i < response.track.toptags.tag.length; i++) {
+                tagsList.push(response.track.toptags.tag[i].name)
+            }
+            tags = tagsList
+        }
+
     } else {
         resetCoverFM()
         updateComponent(error, ['error'], 'Please complete artist and track name fields')
@@ -139,22 +153,9 @@ function handleDropError(value) {
     }, 1000);
 }
 
-function updateComponent(element, classesToAdd = [], message = null) {
-    element.className = ''
-    element.classList.add(...classesToAdd)
-    if (message) {
-        element.textContent = message
-    }
-}
-
 function resetCoverFM() {
     coverFM.innerHTML = '<span class="icon is-large"><i class="fa-solid fa-hand-point-up fa-2xl"></i></span>'
     imgElementUrl = null
-}
-
-function preventDefaultBehavior(event) {
-    event.preventDefault();
-    event.stopPropagation();
 }
 
 function addDragOverClass(event) {
@@ -183,29 +184,4 @@ function resetInput() {
     artistName.value = ''
     trackDuration.value = ''
     duration.value = ''
-}
-
-function isAudioFile(file) {
-    const fileExtension = file.name.split('.').pop();
-    return fileExtension === 'mp3' || fileExtension === 'wav' || fileExtension === 'ogg';
-}
-
-function changeIconColor(element, color) {
-    element.style.color = color;
-}
-
-function formatDuration(totalSeconds) {
-    let hours = Math.floor(totalSeconds / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds = Math.floor(totalSeconds % 60);
-
-    let formattedHours = hours < 10 ? "0" + hours : hours;
-    let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-    let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
-
-    if (formattedHours === "00") {
-        return formattedMinutes + ":" + formattedSeconds;
-    } else {
-        return formattedHours + ":" + formattedMinutes + ":" + formattedSeconds;
-    }
 }

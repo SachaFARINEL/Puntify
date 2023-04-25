@@ -1,5 +1,8 @@
+import {updateComponent} from './utils.js';
+
 const signInForm = document.getElementById('registerForm');
 const submitBtn = document.getElementById('submitBtn');
+const error = document.getElementById('error');
 
 submitBtn.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -12,20 +15,23 @@ submitBtn.addEventListener('click', async (event) => {
         passwConfirmation: signInForm.passwConfirmation.value,
     }
 
-    const response = await fetch('/users/register', {
+    fetch('/users/register', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(user),
-    });
+        redirect: 'follow'
+    }).then(response => {
+        if (response.redirected) {
+            window.location.href = response.url
+        } else if (!response.ok) {
+            response.text().then(errorMessage => {
+                const errorObject = JSON.parse(errorMessage);
+                updateComponent(error, ['error', 'is-visible'], errorObject.detail);
+            });
+        }
+    })
 
-    console.log(await response.json())
 
-    /*if (response.ok) {
-       window.location.href = '/dashboard';
-    } else {
-      const errorData = await response.json();
-      alert(errorData.detail);
-    }*/
 });

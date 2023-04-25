@@ -1,3 +1,4 @@
+import html
 import tempfile
 from typing import Annotated
 from fastapi import APIRouter, Body, Depends, status, Request, File, UploadFile, Form, HTTPException
@@ -22,6 +23,7 @@ async def test(request: Request):
     context = {'request': request, 'tracks': tracks}
     return templates.TemplateResponse("test.html", context)
 
+
 @router.post("/user", response_description="Add music to the user's favorites", response_model=User)
 async def add_favorite_track(current_user: Annotated[User, Depends(get_current_active_user)], track: Track = Body(...)):
     track = jsonable_encoder(track)
@@ -41,7 +43,8 @@ async def post_add_track(
         trackName: str = Form(...),
         artistName: str = Form(...),
         duration: int = Form(...),
-        cover: str = Form(...)):
+        cover: str = Form(...),
+        tags: list = Form(...)):
     file.file.seek(0)
     file_bytes = file.file.read()
 
@@ -52,12 +55,13 @@ async def post_add_track(
         )
 
     track = Track(
-        fileName=fileName,
-        trackName=trackName,
-        artistName=artistName,
+        fileName=html.escape(fileName),
+        trackName=html.escape(trackName),
+        artistName=html.escape(artistName),
         duration=duration,
         cover=cover,
-        music=bytes()
+        music=bytes(),
+        tags=[html.escape(tag.strip()) for tag in tags[0].split(',')]
     )
 
     track = jsonable_encoder(track)
@@ -82,7 +86,7 @@ async def get_duration(file: UploadFile = File(...)):
 
 @router.get("/{track_id}", response_description="Get track", response_class=StreamingResponse)
 async def get_tracks(track_id: str):
-    track = await db["tracks"].find_one({"_id": track_id})
+    track = await db["tracks"].find_one({"_id": html.escape(track_id)})
 
     async def music_stream():
         for i in range(10):

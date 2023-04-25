@@ -25,8 +25,7 @@
                                 <p class="subtitle is-6">{{ track["artistName"] }}</p>
                                 <p class="subtitle is-6">{{ track["duration"] }}</p>
                             </div>
-                            <input type="checkbox" id="star" name="star" value="star" style="-webkit-appearance:none;-moz-appearance:none;appearance:none;outline:none;border:none;background:none;cursor:pointer;">
-                            <label for="star" style="font-size:30px;color:#FFD700;">&#9733;</label>
+                            <div class="fa-regular fa-star" style="color: #f5ff70;" onclick="changeFavorite(this, '{{ track["_id"] }}')" data-is-favorite=false></div>
                         </div>
 
                         <div class="content">
@@ -42,4 +41,7 @@
             </div>
         </div>
     </section>
+{% endblock %}
+{% block script %}
+    <script src="{{ url_for('static', path='/js/home.js') }}" ></script>
 {% endblock %}

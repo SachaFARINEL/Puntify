@@ -34,6 +34,7 @@ class User(BaseModel):
     hashed_passwd: str
     tracks: list[Track] | None = Field(None, alias="tracks")
     flag_status: bool | None = 1
+    admin: bool = 0
 
     class Config:
         json_encoders = {ObjectId: str}
@@ -87,7 +88,6 @@ async def authenticate_user(email: str, password: str):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
-            headers={"WWW-Authenticate": "Bearer"},
         )
 
     return user
@@ -95,3 +95,11 @@ async def authenticate_user(email: str, password: str):
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def is_admin(current_user: Annotated[User, Depends(get_current_active_user)]):
+    if current_user["admin"] is False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="access reserved to admin",
+        )

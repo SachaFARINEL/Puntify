@@ -13,6 +13,7 @@ class Track(BaseModel):
     duration: time
     cover: str
     music: bytes
+    tags: list[str] = []
 
     class Config:
         json_encoders = {

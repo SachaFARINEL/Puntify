@@ -3,20 +3,41 @@
 {% block title %}Zone d'administration{% endblock %}
 
 {% block content %}
-<table class="table is-bordered is-fullwidth">
-  <thead>
-    <tr>
-      <th>Lastname & Firstname</th>
-      <th>Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for user in users %}
-        <tr>
-          <td>{{ user["lastName"] }} {{ user["firstName"] }}</td>
-          <td>{{ user["email"] }}</td>
-        </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <div>
+        <table class="table is-bordered is-fullwidth">
+          <thead>
+            <tr>
+              <th>Lastname & Firstname</th>
+              <th>Email</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+                <tr>
+                  <td>{{ user["lastName"] }} {{ user["firstName"] }}</td>
+                  <td>{{ user["email"] }}</td>
+                    <td>
+                        <button type="button" onclick="deleteUser('{{ user["_id"] }}')"><i class="fa-solid fa-xmark" style="color: #ff0000;"></i></button>
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div id="confirm-delete-modal">
+            <div class="modal">
+              <div class="modal-background"></div>
+              <div class="modal-content">
+                  <div class="box">
+                  </div>
+              </div>
+              <button class="modal-close is-large" aria-label="close"></button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', path='js/admin.js') }}"></script>
 {% endblock %}

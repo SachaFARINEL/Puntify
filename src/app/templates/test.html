@@ -7,35 +7,37 @@
 
 {% block content %}
     <div class="columns is-multiline">
-    {% for track in tracks %}
+        {% for track in tracks %}
 
-    <div class="column is-2">
+            <div class="column is-2">
                 <div class="spotify-music-container">
                     <div class="spotify-music">
-                        <div class="card" data-music-id="{{ track['_id'] }}">
+                        <div class="card">
                             <div class="overlayer">
-                                <i class="fa-regular fa-circle-play fa-sm" style="color: #ffffff;"></i>
+                                <i class="fa-regular fa-circle-play fa-sm" style="color: #ffffff;" onclick="addSourceToAudio('{{ track['_id'] }}')"></i>
                             </div>
                             <img src="{{ track['cover'] }}"
                                  alt="coverFor{{ track['trackName'] }}-{{ track['artistName'] }}">
                         </div>
                         <div class="spotify-music-details">
-                            <div class="spotify-music-title">{{ track['trackName']}}</div>
-                            <div class="spotify-music-artist">{{ track['artistName']}}</div>
-                            <div class="spotify-music-duration">{{ track['duration']}}</div>
+                            <div class="spotify-music-title">{{ track['trackName'] }}</div>
+                            <div class="spotify-music-artist">{{ track['artistName'] }}</div>
+                            <div class="spotify-music-duration">{{ track['duration'] }}</div>
                         </div>
-
                     </div>
                 </div>
             </div>
-
-    {% endfor %}
+        {% endfor %}
     </div>
+    <div>
+        <audio controls preload="none"></audio>
+    </div>
+
 
 
 {% endblock %}
 
 {% block script %}
-
+    <script src="{{ url_for('static', path='js/listenTracks.js') }}"></script>
 {% endblock %}
 
