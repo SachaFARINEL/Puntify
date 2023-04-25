@@ -3,4 +3,5 @@ function addSourceToAudio(id) {
     audio.load()
     audio.innerHTML = `<source src=${`/tracks/${id}`}>`
     audio.play()
+    audio.addTextTrack()
 }
