@@ -9,6 +9,15 @@
         <div class="columns">
             <div class="column is-3">
                 <aside class="menu is-hidden-mobile">
+                <p class="menu-label">
+                        Home
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="{{ url_for('get_home') }}"
+                               {% if request.url.path == url_for('get_home').path %}class="has-background-primary is-active"{% endif %}>Home</a>
+                        </li>
+                    </ul>
+                {% if is_admin %}
                     <p class="menu-label">
                         General
                     </p>
@@ -38,6 +47,7 @@
                     <p class="menu-label">
                         Logs
                     </p>
+                {% endif %}
                 </aside>
             </div>
             <div class="column is-9">

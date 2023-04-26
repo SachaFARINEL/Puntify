@@ -1,8 +1,9 @@
 import html
+from typing import Annotated
 from uuid import uuid4
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import RedirectResponse
 from pydantic import EmailStr, BaseModel
@@ -11,7 +12,7 @@ from starlette.responses import HTMLResponse
 
 from .. import templates
 from ..config import db
-from ..models import User, UserCreate
+from ..models import User, UserCreate, get_current_active_user, is_admin
 from ..internal import pwd_context, create_access_token
 from ..ressources.session import SessionData, backend, cookie
 
@@ -86,11 +87,12 @@ async def delete_user(user: UserId):
     return {'deleted': True}
 
 
-@router.get("/usersSettings", response_class=HTMLResponse)
-async def get_users_settings(request: Request):
-    users_list = await db["user"].find({}, {'password': 0}).to_list(10)
-    context = {"request": request, 'users': users_list}
-    return templates.TemplateResponse("admin/usersSettings.html", context)
+@router.get("/settings", dependencies=[Depends(cookie)], response_class=HTMLResponse)
+async def get_users_settings(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
+    if is_admin(current_user):
+        users_list = await db["user"].find({}, {'password': 0}).to_list(10)
+        context = {"request": request, 'users': users_list, 'is_admin': current_user['admin']}
+        return templates.TemplateResponse("admin/usersSettings.html", context)
 
 
 @router.put('')

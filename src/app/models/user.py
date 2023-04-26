@@ -101,5 +101,5 @@ def is_admin(current_user: Annotated[User, Depends(get_current_active_user)]):
     if current_user["admin"] is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="access reserved to admin",
+            detail="You are not an admin"
         )
