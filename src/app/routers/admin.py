@@ -10,7 +10,6 @@ from ..ressources.session import cookie
 router = APIRouter()
 
 
-@router.get("/", dependencies=[Depends(cookie)])
+@router.get("", dependencies=[Depends(cookie)])
 async def root(request: Request, current_user: Annotated[User, Depends(is_admin)]):
-    users = await db["user"].find().to_list(1000)
-    return templates.TemplateResponse("adminOld.html", {"request": request, "users": users})
+    return 'no template'

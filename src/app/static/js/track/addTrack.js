@@ -1,4 +1,4 @@
-import {changeIconColor, formatDuration, isAudioFile, updateComponent, preventDefaultBehavior} from "./utils.js";
+import {changeIconColor, formatDuration, isAudioFile, updateComponent, preventDefaultBehavior} from "../utils/utils.js";
 
 const dropZone = document.getElementById('dropZone');
 const error = document.getElementById('error');

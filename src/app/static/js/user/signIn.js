@@ -1,4 +1,4 @@
-import {updateComponent} from './utils.js';
+import {updateComponent} from '../utils/utils.js';
 
 const signInForm = document.getElementById('registerForm');
 const submitBtn = document.getElementById('submitBtn');
