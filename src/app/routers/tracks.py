@@ -105,19 +105,22 @@ class Test(BaseModel):
 
 @router.put("/{track_id}/favorite", response_description="Add/remove track of favorites tracks users",
             dependencies=[Depends(cookie)])
-async def add_track_to_favorites_user(track_id: str, current_user: Annotated[User, Depends(get_current_active_user)],
-                                      action: ActionFavorite):
-    track = await db["tracks"].find_one({'_id': track_id})
+async def add_track_to_favorites_user(
+        track_id: str,
+        current_user: Annotated[User, Depends(get_current_active_user)],
+        action: ActionFavorite):
+    if is_admin(current_user):
+        track = await db["tracks"].find_one({'_id': track_id})
 
-    if track is None:
-        raise HTTPException(404, detail='track not found')
+        if track is None:
+            raise HTTPException(404, detail='track not found')
 
-    await db["user"].update_one(
-        {'_id': current_user["_id"]},
-        {'$push': {'tracks': PyObjectId(track['_id'])}}
-    )
+        await db["user"].update_one(
+            {'_id': current_user["_id"]},
+            {'$push': {'tracks': PyObjectId(track['_id'])}}
+        )
 
-    return 'ok'
+        return 'ok'
 
 
 @router.get("/{track_id}", response_description="Get track", response_class=StreamingResponse)
@@ -135,11 +138,12 @@ class TrackId(BaseModel):
     id: str
 
 
-@router.delete('')
-async def delete_user(track: TrackId):
-    result = await db["tracks"].delete_one({"_id": track.id})
+@router.delete('', dependencies=[Depends(cookie)])
+async def delete_user(track: TrackId, current_user: Annotated[User, Depends(get_current_active_user)]):
+    if is_admin(current_user):
+        result = await db["tracks"].delete_one({"_id": track.id})
 
-    if result.deleted_count < 1:
-        raise HTTPException(status_code=500, detail='Error on delete user')
+        if result.deleted_count < 1:
+            raise HTTPException(status_code=500, detail='Error on delete user')
 
-    return {'deleted': True}
+        return {'deleted': True}

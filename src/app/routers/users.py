@@ -77,16 +77,6 @@ async def register(userCreate: UserCreate):
     return response
 
 
-@router.delete('')
-async def delete_user(user: UserId):
-    result = await db["user"].delete_one({"_id": user.id})
-
-    if result.deleted_count < 1:
-        raise HTTPException(status_code=500, detail='Error on delete user')
-
-    return {'deleted': True}
-
-
 @router.get("/settings", dependencies=[Depends(cookie)], response_class=HTMLResponse)
 async def get_users_settings(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
@@ -95,13 +85,25 @@ async def get_users_settings(request: Request, current_user: Annotated[User, Dep
         return templates.TemplateResponse("admin/usersSettings.html", context)
 
 
-@router.put('')
-async def update_flag(user: UserFlag):
-    new_flag_status = not user.flagStatus
+@router.delete('',dependencies=[Depends(cookie)])
+async def delete_user(user: UserId, current_user: Annotated[User, Depends(get_current_active_user)]):
+    if is_admin(current_user):
+        result = await db["user"].delete_one({"_id": user.id})
 
-    result = await db["user"].update_one(
-        {"_id": user.id},
-        {"$set": {"flag_status": new_flag_status}}
-    )
+        if result.deleted_count < 1:
+            raise HTTPException(status_code=500, detail='Error on delete user')
 
-    return new_flag_status
+        return {'deleted': True}
+
+
+@router.put('', dependencies=[Depends(cookie)])
+async def update_flag(user: UserFlag, current_user: Annotated[User, Depends(get_current_active_user)]):
+    if is_admin(current_user):
+        new_flag_status = not user.flagStatus
+
+        result = await db["user"].update_one(
+            {"_id": user.id},
+            {"$set": {"flag_status": new_flag_status}}
+        )
+
+        return new_flag_status
