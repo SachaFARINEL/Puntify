@@ -1,6 +1,8 @@
 import html
 import pprint
 from typing import Annotated
+
+from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, status, Request, File, UploadFile, Form, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -12,7 +14,7 @@ from ..dependencies import templates
 from mutagen.mp3 import MP3
 from ..config import db
 from ..ressources.session import cookie
-from ..ressources.utils import remove_prefix_zero
+from ..ressources.utils import remove_prefix_zero, PyObjectId
 
 router = APIRouter()
 
@@ -96,8 +98,13 @@ async def get_tracks_settings(request: Request):
 class ActionFavorite(BaseModel):
     action: str
 
+
 class Test(BaseModel):
     tracks: list[str] = []
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
 
 @router.put("/{track_id}/favorite", response_description="Add/remove track of favorites tracks users",
             dependencies=[Depends(cookie)])
@@ -108,12 +115,10 @@ async def add_track_to_favorites_user(track_id: str, current_user: Annotated[Use
     if track is None:
         raise HTTPException(404, detail='track not found')
 
-    test = Test(tracks=[track['_id']])
-
-    await db["user"].update_one({
+    await db["user"].update_one(
         {'_id': current_user["_id"]},
-        {'$set': test}
-    })
+        {'$push': {'tracks': PyObjectId(track['_id']) }}
+    )
 
     return 'ok'
 
