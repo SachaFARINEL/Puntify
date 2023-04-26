@@ -37,7 +37,7 @@ async def add_favorite_track(current_user: Annotated[User, Depends(get_current_a
 @router.get("/add", response_description="get add a track form")
 async def get_add_track_form(request: Request):
     context = {'request': request}
-    return templates.TemplateResponse("track/addTrack.html", context)
+    return templates.TemplateResponse("admin/addTracks.html", context)
 
 
 @router.post("/add", response_description="Add a track")

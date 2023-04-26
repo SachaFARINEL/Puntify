@@ -29,6 +29,13 @@
                             Settings</a></li>
                     </ul>
                     <p class="menu-label">
+                        Features
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="{{ url_for('get_add_track_form') }}"
+                               {% if request.url.path == url_for('get_add_track_form').path %}class="has-background-primary is-active"{% endif %}>Add some tracks</a></li>
+                    </ul>
+                    <p class="menu-label">
                         Logs
                     </p>
                 </aside>
