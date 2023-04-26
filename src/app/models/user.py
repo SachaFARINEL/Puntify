@@ -103,3 +103,4 @@ def is_admin(current_user: Annotated[User, Depends(get_current_active_user)]):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You are not an admin"
         )
+    return True
