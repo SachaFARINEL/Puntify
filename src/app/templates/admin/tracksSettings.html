@@ -1,0 +1,50 @@
+{% extends "layout/templateLayout.html" %}
+
+{% block title %}Tracks settings{% endblock %}
+
+{% block section %}
+    <section>
+        <div class="container">
+            <div class="b-table">
+                <div class="table-wrapper has-mobile-cards">
+                    <table id="users-table" class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Track</th>
+                            <th>Artist</th>
+                            <th>Tags</th>
+                            <th>Duration</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for track in tracks %}
+                            <tr id="{{ track['_id'] }}">
+                                <td class="trackName">{{ track['trackName']}}</td>
+                                <td class="artistName">  {{ track['artistName'] }}</td>
+                                <td>{{ track['tags'] }}</td>
+                                <td class="duration">{{ track['duration'] }}</td>
+                                <td class="is-actions-cell">
+                                    <div class="buttons is-right">
+                                        <button class="button is-small is-warning" type="button">
+                                            <i class="fa-solid fa-flag" style="color: #ffffff;"></i>
+                                        </button>
+                                        <button id="delete" class="button is-small is-danger" type="button" onclick="deleteTrack('{{ track['_id'] }}')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', path='/js/admin/tracksSettings.js') }}"></script>
+
+{% endblock %}

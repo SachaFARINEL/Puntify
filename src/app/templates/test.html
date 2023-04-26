@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout/layout.html" %}
 {% block style %}
     <link href="{{ url_for('static', path='/css/test.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">
@@ -14,7 +14,7 @@
                     <div class="spotify-music">
                         <div class="card">
                             <div class="overlayer">
-                                <i class="fa-regular fa-circle-play fa-sm" style="color: #ffffff;" onclick="addSourceToAudio('{{ track['_id'] }}')"></i>
+                                <i class="fa-regular fa-circle-play fa-sm player-button" data-track-id="{{ track['_id'] }}" data-track-artist="{{ track['artistName'] }}" data-track-name="{{ track['trackName'] }}" data-track-duration="{{ track['duration'] }}" style="color: #ffffff;"></i>
                             </div>
                             <img src="{{ track['cover'] }}"
                                  alt="coverFor{{ track['trackName'] }}-{{ track['artistName'] }}">
@@ -29,9 +29,26 @@
             </div>
         {% endfor %}
     </div>
-    <div>
-        <audio controls preload="none"></audio>
-    </div>
+    <footer class="footer columns">
+        <div class="column is-one-fifth">
+            <button class="button is-rounded is-large" id="play-pause-button" disabled>
+              <span class="icon" style="margin-left: 0 !important;">
+                <i class="fas fa-play" id="play-pause-button-icon"></i>
+              </span>
+            </button>
+        </div>
+        <div class="column">
+            <progress  class="progress is-primary" max="100" value="0" id="track-progress-bar"></progress>
+            <h1 id="track-metadata"></h1>
+        </div>
+        <div class="column is-one-fifth">
+            <button class="button is-rounded is-large" id="stop-button" disabled>
+              <span class="icon" style="margin-left: 0 !important;">
+                <i class="fas fa-stop"></i>
+              </span>
+            </button>
+        </div>
+    </footer>
 
 
 

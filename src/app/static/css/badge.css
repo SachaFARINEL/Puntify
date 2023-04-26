@@ -1,0 +1,35 @@
+.badge {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  line-height: 20px;
+  margin-right: 8px;
+}
+
+.blue {
+  background-color: #1e90ff;
+}
+
+.green {
+  background-color: #00b894;
+}
+
+.orange {
+  background-color: #ff9f43;
+}
+
+.purple {
+  background-color: #6c5ce7;
+}
+
+.red {
+  background-color: #ff4757;
+}
+
+.initials {
+  text-transform: uppercase;
+}

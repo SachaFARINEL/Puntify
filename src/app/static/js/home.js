@@ -1,5 +1,5 @@
 function changeFavorite(div, id) {
-    const isFavorite = div.dataset.isFavorite
+    let {isFavorite} = div.dataset
 
     let action = isFavorite === 'true' ? {action: "remove"} : {action: "add"}
 
@@ -9,19 +9,21 @@ function changeFavorite(div, id) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(action)
-    }).then(response => {
-        changeIcon(isFavorite, div)
+    }).then(() => {
+        div.dataset.isFavorite = isFavorite === 'true' ? "false" : "true"
+        changeIcon(div.dataset.isFavorite, div)
     }).catch(error => {
 
     })
 }
 
 function changeIcon(isFavorite, div) {
-    if (isFavorite) {
-        div.classList.remove('fa-solid')
-        div.classList.add('fa-regular')
-    } else {
+    if (isFavorite === "true") {
         div.classList.remove('fa-regular')
         div.classList.add('fa-solid')
+    } else {
+        console.log('false')
+        div.classList.remove('fa-solid')
+        div.classList.add('fa-regular')
     }
 }

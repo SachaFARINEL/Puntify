@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("/login", response_class=HTMLResponse)
 async def get_login(request: Request):
     context = {"request": request}
-    return templates.TemplateResponse("login.html", context)
+    return templates.TemplateResponse("auth/login.html", context)
 
 
 @router.post('/login', response_description="Puntify connection")
@@ -47,4 +47,4 @@ async def post_login(request: Request, form_data: Annotated[OAuth2PasswordReques
     except HTTPException as e:
         error = e.detail
         context = {'request': request, 'error': error}
-        return templates.TemplateResponse("login.html", context)
+        return templates.TemplateResponse("auth/login.html", context)

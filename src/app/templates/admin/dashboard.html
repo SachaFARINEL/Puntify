@@ -1,0 +1,46 @@
+{% extends "layout/templateLayout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block section %}
+    <section class="hero is-primary welcome is-small">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Hello, Admin.
+                </h1>
+                <h2 class="subtitle">
+                    I hope you are having a great day!
+                </h2>
+            </div>
+        </div>
+    </section>
+    <section class="info-tiles">
+        <div class="tile is-ancestor has-text-centered">
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ users_count }}</p>
+                    <p class="subtitle">Users</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ tracks_count }}</p>
+                    <p class="subtitle">Tracks</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ total_listening_minutes }}</p>
+                    <p class="subtitle">Listening minutes</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ num_unique_tags }}</p>
+                    <p class="subtitle">Tags</p>
+                </article>
+            </div>
+        </div>
+    </section>
+{% endblock %}

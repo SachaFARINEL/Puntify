@@ -1,0 +1,42 @@
+{% extends "layout/layout.html" %}
+{% block style %}
+    <link href="{{ url_for('static', path='/css/admin.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/main.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="columns">
+            <div class="column is-3">
+                <aside class="menu is-hidden-mobile">
+                    <p class="menu-label">
+                        General
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="{{ url_for('get_dashboard') }}"
+                               {% if request.url.path == url_for('get_dashboard').path %}class="has-background-primary is-active"{% endif %}>Dashboard</a>
+                        </li>
+                    </ul>
+                    <p class="menu-label">
+                        Administration
+                    </p>
+                    <ul class="menu-list">
+                        <li><a href="{{ url_for('get_users_settings') }}"
+                               {% if request.url.path == url_for('get_users_settings').path %}class="has-background-primary is-active"{% endif %}>Users
+                            Settings</a></li>
+                        <li><a href="{{ url_for('get_tracks_settings') }}"
+                               {% if request.url.path == url_for('get_tracks_settings').path %}class="has-background-primary is-active"{% endif %}>Tracks
+                            Settings</a></li>
+                    </ul>
+                    <p class="menu-label">
+                        Logs
+                    </p>
+                </aside>
+            </div>
+            <div class="column is-9">
+                {% block section %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

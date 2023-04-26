@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
 
-body {
-    font-family: 'Fira Code', monospace !important;
+:root {
+    --brandColor: hsl(166, 67%, 51%);
+    --background: rgb(247, 247, 247);
+    --textDark: hsla(0, 0%, 0%, 0.66);
+    --textLight: hsla(0, 0%, 0%, 0.33);
+}
+
+
+:root {
+    background: #ecf0f3;
 }

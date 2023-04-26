@@ -32,8 +32,8 @@ class User(BaseModel):
     lastName: str
     email: EmailStr
     hashed_passwd: str
-    tracks: list[Track] | None = Field(None, alias="tracks")
-    flag_status: bool | None = 1
+    tracks: list[str] = []
+    flag_status: bool = 1
     admin: bool = 0
 
     class Config:
@@ -66,8 +66,8 @@ async def get_current_user(session_data: SessionData = Depends(verifier)):
     except JWTError:
         raise credentials_exception
     user = await get_user(token_data.email)
-    if user is None:
-        raise credentials_exception
+    #if user is None:
+     #   raise credentials_exception
     return user
 
 

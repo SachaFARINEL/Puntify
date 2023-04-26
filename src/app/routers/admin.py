@@ -13,4 +13,4 @@ router = APIRouter()
 @router.get("/", dependencies=[Depends(cookie)])
 async def root(request: Request, current_user: Annotated[User, Depends(is_admin)]):
     users = await db["user"].find().to_list(1000)
-    return templates.TemplateResponse("admin.html", {"request": request, "users": users})
+    return templates.TemplateResponse("adminOld.html", {"request": request, "users": users})
