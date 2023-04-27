@@ -1,12 +1,9 @@
 import os
-
 from typing import Annotated
 from bson import ObjectId
 from fastapi import HTTPException, Depends, status
 from pydantic import BaseModel, Field
 from pydantic import EmailStr
-
-from .track import Track
 from jose import JWTError, jwt
 from ..ressources import PyObjectId
 from ..config import db
@@ -14,9 +11,11 @@ from dotenv import load_dotenv
 from ..internal import pwd_context
 from ..ressources.session import SessionData, verifier
 
+# load_dotenv(dotenv_path="src/.env")
 load_dotenv()
 
 
+# Pydantic Token models
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -50,7 +49,9 @@ class UserCreate(BaseModel):
     passwConfirmation: str = None
 
 
+# get_current_user and get_current_active_user are used to get the current user from the token
 async def get_current_user(session_data: SessionData = Depends(verifier)):
+    # define credentials_exception
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -58,20 +59,25 @@ async def get_current_user(session_data: SessionData = Depends(verifier)):
     )
 
     try:
+        # decode the token
         payload = jwt.decode(session_data.token, os.environ["SECRET_KEY"], algorithms=os.environ["ALGORITHM"])
+        # get the email from the token
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
         token_data = TokenData(email=email)
     except JWTError:
         raise credentials_exception
+    # get the user from the database
     user = await get_user(token_data.email)
     if user is None:
         raise credentials_exception
     return user
 
 
+# get_current_active_user is used to get the current user from the token
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
+    # if the user is not active, raise an error
     if not current_user["flag_status"]:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -79,7 +85,6 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
 
 async def get_user(email: str):
     return await db["user"].find_one({"email": email})
-
 
 async def authenticate_user(email: str, password: str):
     user = await get_user(email)

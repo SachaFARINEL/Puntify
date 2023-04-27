@@ -1,12 +1,11 @@
 from typing import Optional
-
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from datetime import time
-
 from ..ressources import PyObjectId
 
 
+# Pydantic models
 class Track(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     fileName: str
