@@ -20,6 +20,7 @@
                             <th>Track</th>
                             <th>Artist</th>
                             <th>Duration</th>
+                            <th>Favorites</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -29,9 +30,22 @@
                                 <td class="trackName">{{ track['trackName'] }}</td>
                                 <td class="artistName">  {{ track['artistName'] }}</td>
                                 <td class="duration">{{ track['duration'] }}</td>
+                                <td class="favorites">
+
+                                    {% if track["_id"] in current_user['tracks'] %}
+                                        {% set star_icon = 'fa-solid' %}
+                                        {% set is_favorite = true %}
+                                    {% else %}
+                                        {% set star_icon = 'fa-regular' %}
+                                        {% set is_favorite = true %}
+                                    {% endif %}
+                                    <div class="{{ star_icon }} fa-star fa-xl" style="color: #00D1B2;"
+                                         onclick="changeFavorite(this, '{{ track["_id"] }}')"
+                                         data-is-favorite="{{ is_favorite }}"></div>
+                                </td>
                                 <td class="is-actions-cell">
                                     <div class="buttons is-right">
-                                        <button class="button is-small is-warning update-track" type="button">
+                                        <button class="button is-small is-primary update-track" type="button">
                                             <i class="fa-regular fa-circle-play fa-sm player-button"
                                                data-track-id="{{ track['_id'] }}"
                                                data-track-artist="{{ track['artistName'] }}"
@@ -48,7 +62,8 @@
                 </div>
             </div>
         </section>
-        <footer class="footer">
+
+        <section class="footer">
             <div class="columns">
                 <div class="column is-one-fifth">
                     <button class="button is-rounded is-large" id="play-pause-button" disabled>
@@ -69,11 +84,11 @@
                     </button>
                 </div>
             </div>
-
-        </footer>
+        </section>
     </div>
 {% endblock %}
 
 {% block script %}
     <script src="{{ url_for('static', path='js/track/listenTracks.js') }}"></script>
+    <script src="{{ url_for('static', path='js/track/favorites.js') }}"></script>
 {% endblock %}
