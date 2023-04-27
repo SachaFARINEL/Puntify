@@ -51,6 +51,17 @@ const enablePlayerButton = () => {
     playerButtonIsEnabled = true
 }
 
+const disablePlayerButton = () => {
+    document.getElementById('stop-button').disabled = true
+    document.getElementById('play-pause-button').disabled = true
+
+    const playStopButtonIcon = document.getElementById('play-pause-button-icon')
+    playStopButtonIcon.classList.remove('fa-pause')
+    playStopButtonIcon.classList.add('fa-play')
+
+    playerButtonIsEnabled = false
+}
+
 /**
  * Représente une piste audio.
  * @class
@@ -119,9 +130,7 @@ class Track {
     #startProgressBar() {
         const refreshBar = () => {
             const percent = Math.round(((this.#track.currentTime / this.#duration) * 100) * 10) / 10
-            const progressBar = document.getElementById('track-progress-bar')
-            progressBar.value = percent
-            progressBar.innerText = `${percent}%`
+            this.setProgressBarValue(percent)
             if (percent >= 100) {
                 this.stop()
                 clearInterval(this.#progressBarInterval)
@@ -137,18 +146,24 @@ class Track {
         this.#track.pause()
     }
 
+    setProgressBarValue(percent) {
+        const progressBar = document.getElementById('track-progress-bar')
+        progressBar.value = percent
+        progressBar.innerText = `${percent}%`
+    }
+
     /**
      * Stop la lecture de la piste audio.
      */
     stop() {
         this.#state = 'pause'
-        this.pause()
         this.#track.src = ''
         this.#track.load()
+        disablePlayerButton()
+        document.getElementById('track-metadata').innerText = ''
+        this.setProgressBarValue(0)
+        clearInterval(this.#progressBarInterval)
 
-        const playStopButtonIcon = document.getElementById('play-pause-button-icon')
-        playStopButtonIcon.classList.remove('fa-pause')
-        playStopButtonIcon.classList.add('fa-play')
     }
 
     switchPlayPause() {
