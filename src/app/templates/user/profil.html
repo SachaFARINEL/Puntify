@@ -1,28 +1,40 @@
-{% extends "layout/layout.html" %}
+{% extends "layout/templateLayout.html" %}
+
+{% block title %}Profil{% endblock %}
+
 {% block style %}
-    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">{% endblock %}
-{% block title %}Create an account{% endblock %}
+    {{ super() }}
+    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">
+{% endblock %}
 
-{% block content %}
-    <section class="hero is-fullheight">
-        <div class="back-btn">
-            <a href="{{ url_for('get_landing') }}"><img src="{{ url_for('static', path='/img/arrow_left.png') }}"></a>
+{% block section %}
+    <section class="hero is-primary welcome is-small">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Hello, {{ current_user['firstName'] }}.
+                </h1>
+                <h2 class="subtitle">
+                    I hope you are having a great day!
+                </h2>
+            </div>
         </div>
-        <div class="hero-body column">
-            <div class="column is-4 is-offset-4 cardStyle">
+    </section>
+
+    <section>
+
+        <div class="hero-body column is-8 is-offset-2">
+            <div class="cardStyle">
                 <div class="column p-6">
-
                     <div class="has-text-centered">
-                        <h1 class="title is-4">Create an account</h1>
-                        <p id="error" class="error is-invisible"
+                        <p id="error" class="error is-invisible m-4"
                            style="height: 26px; margin-top: 0.5rem; margin-bottom: 0.5rem"></p>
-                        <form method="post" id="registerForm">
-
+                        <form id="registerForm">
                             <div class="field">
                                 <div class="control">
                                     <label>
                                         <input class="input is-medium" type="text" placeholder="First name"
-                                               name="firstName"
+                                               name="firstName" value="{{ current_user['firstName'] }}"
                                                required>
                                     </label>
                                 </div>
@@ -32,7 +44,7 @@
                                 <div class="control">
                                     <label>
                                         <input class="input is-medium" type="text" placeholder="Last name"
-                                               name="lastName"
+                                               name="lastName" value="{{ current_user['lastName'] }}"
                                                required>
                                     </label>
                                 </div>
@@ -42,16 +54,16 @@
                                 <div class="control">
                                     <label>
                                         <input class="input is-medium" type="email" placeholder="Email" name="email"
-                                               required>
+                                               required value="{{ current_user['email'] }}" disabled>
                                     </label>
                                 </div>
                             </div>
 
-                            <div class="field">
+                            <div class=" field">
                                 <div class="control">
                                     <label>
                                         <input class="input is-medium" type="password" placeholder="Password"
-                                               name="passwd" required>
+                                               name="passwd">
                                     </label>
                                 </div>
                             </div>
@@ -60,7 +72,7 @@
                                 <div class="control">
                                     <label>
                                         <input class="input is-medium" type="password" placeholder="Confirmation"
-                                               name="passwConfirmation" required>
+                                               name="passwConfirmation">
                                     </label>
                                 </div>
                             </div>
@@ -68,10 +80,6 @@
                                 Submit
                             </button>
                             <br/>
-                            <small>
-                                <em>Already have an account ? </em>
-                                <a href="{{ url_for('get_login') }}">Log in</a>
-                            </small>
                         </form>
                     </div>
                 </div>
@@ -81,5 +89,5 @@
 {% endblock %}
 
 {% block script %}
-    <script type="module" src="{{ url_for('static', path='js/user/signIn.js') }}"></script>
+    <script type="module" src="{{ url_for('static', path='js/user/profil.js') }}"></script>
 {% endblock %}

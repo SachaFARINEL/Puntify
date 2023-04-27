@@ -1,6 +1,10 @@
 {% extends "layout/templateLayout.html" %}
 
 {% block title %}Tracks settings{% endblock %}
+{% block style %}
+    {{ super() }}
+    <link href="{{ url_for('static', path='/css/register.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block section %}
     <section>
@@ -26,10 +30,10 @@
                                 <td class="duration">{{ track['duration'] }}</td>
                                 <td class="is-actions-cell">
                                     <div class="buttons is-right">
-                                        <button class="button is-small is-warning" type="button">
-                                            <i class="fa-solid fa-flag" style="color: #ffffff;"></i>
+                                        <button class="button is-small is-warning update-track" type="button">
+                                            <i class="fa-solid fa-gear" style="color: #ffffff;" data-track-id="{{ track['_id'] }}"></i>
                                         </button>
-                                        <button id="delete" class="button is-small is-danger" type="button" onclick="deleteTrack('{{ track['_id'] }}')">
+                                        <button class="button is-small is-danger delete-track" type="button"  data-track-id="{{ track['_id'] }}">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
@@ -42,8 +46,13 @@
             </div>
         </div>
     </section>
+    <div id="track-update-modal"></div>
 {% endblock %}
 
 {% block script %}
-    <script src="{{ url_for('static', path='/js/admin/tracksSettings.js') }}"></script>
+    <script type="module">
+        import {initDeleteButton, initUpdateButton} from "{{ url_for('static', path='/js/admin/tracksSettings.js') }}";
+        initDeleteButton()
+        initUpdateButton()
+    </script>
 {% endblock %}

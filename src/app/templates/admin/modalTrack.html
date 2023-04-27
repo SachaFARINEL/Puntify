@@ -1,0 +1,61 @@
+<div class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="hero-body column is-8 is-offset-2">
+            <div class="cardStyle">
+                <div class="column p-6">
+                    <div class="has-text-centered">
+                        <p id="error" class="error is-invisible m-4"
+                           style="height: 26px; margin-top: 0.5rem; margin-bottom: 0.5rem"></p>
+                        <h1>Modification du track n°{{ track['_id'] }}</h1>
+                        <br>
+                        <form id="update-track-form">
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="Artist name"
+                                               name="artistName" value="{{ track['artistName'] }}"
+                                               required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="File name"
+                                               name="fileName" value="{{ track['fileName'] }}"
+                                               required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="text" placeholder="Track name" name="trackName"
+                                               required value="{{ track['trackName'] }}">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class=" field">
+                                <div class="control">
+                                    <label>
+                                        <input class="input is-medium" type="url" placeholder="Cover (https link)"
+                                               name="cover" required value="{{ track['cover'] }}">
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="button is-block is-primary is-fullwidth is-medium mt-4">
+                                Submit
+                            </button>
+                            <br/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>

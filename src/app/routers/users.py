@@ -3,7 +3,7 @@ from typing import Annotated
 from uuid import uuid4
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Form
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import RedirectResponse
 from pydantic import EmailStr, BaseModel
@@ -30,33 +30,31 @@ class UserFlag(BaseModel):
 
 @router.post('/register', response_description="Add new user")
 async def register(userCreate: UserCreate):
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print("date and time =", dt_string)
     if userCreate.passwd != userCreate.passwConfirmation:
         raise HTTPException(status_code=400, detail="Passwords do not match")
     if await db["user"].find_one({"email": userCreate.email}):
         raise HTTPException(status_code=500, detail="Email already exists")
 
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print("date and time =", dt_string)
     hashed_passwd = pwd_context.hash(html.escape(userCreate.passwd))
+
+    users_count = await db["user"].count_documents({})
+
+    if users_count == 0:
+        admin = True
+    else:
+        admin = False
+
     try:
         user = User(
             firstName=html.escape(userCreate.firstName),
             lastName=html.escape(userCreate.lastName),
             email=EmailStr(html.escape(userCreate.email)),
             hashed_passwd=hashed_passwd,
-            admin=False
+            admin=admin
         )
 
         user = jsonable_encoder(user)
         await db["user"].insert_one(user)
-
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print("date and time =", dt_string)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -69,12 +67,15 @@ async def register(userCreate: UserCreate):
 
     await backend.create(session, data)
 
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    print("date and time =", dt_string)
     cookie.attach_to_response(response, session)
 
     return response
+
+
+@router.get("/profil", dependencies=[Depends(cookie)], response_class=HTMLResponse)
+async def get_profil(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
+    context = {"request": request, 'current_user': current_user, 'is_admin': current_user['admin']}
+    return templates.TemplateResponse("user/profil.html", context)
 
 
 @router.get("/settings", dependencies=[Depends(cookie)], response_class=HTMLResponse)
@@ -85,7 +86,7 @@ async def get_users_settings(request: Request, current_user: Annotated[User, Dep
         return templates.TemplateResponse("admin/usersSettings.html", context)
 
 
-@router.delete('',dependencies=[Depends(cookie)])
+@router.delete('', dependencies=[Depends(cookie)])
 async def delete_user(user: UserId, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         result = await db["user"].delete_one({"_id": user.id})
@@ -97,6 +98,32 @@ async def delete_user(user: UserId, current_user: Annotated[User, Depends(get_cu
 
 
 @router.put('', dependencies=[Depends(cookie)])
+async def update(user: UserCreate, current_user: Annotated[User, Depends(get_current_active_user)]):
+    if user.passwd != user.passwConfirmation:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+
+    fields_to_update = {}
+    if user.firstName != current_user['firstName']:
+        fields_to_update["firstName"] = user.firstName
+
+    if user.lastName != current_user['lastName']:
+        fields_to_update["lastName"] = user.lastName
+
+    # if user.email != current_user['email']:
+    #     fields_to_update["email"] = user.email
+
+    if user.passwd is not None and not pwd_context.verify(user.passwd, current_user['hashed_passwd']):
+        fields_to_update["hashed_passwd"] = pwd_context.hash(html.escape(user.passwd))
+
+    if fields_to_update:
+        result = await db["user"].update_one(
+            {"_id": current_user['_id']},
+            {"$set": fields_to_update}
+        )
+    return user.passwd
+
+
+@router.put('/updateFlag', dependencies=[Depends(cookie)])
 async def update_flag(user: UserFlag, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         new_flag_status = not user.flagStatus

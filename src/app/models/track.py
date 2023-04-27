@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bson import ObjectId
 from pydantic import BaseModel, Field
 from datetime import time
@@ -20,3 +22,10 @@ class Track(BaseModel):
             ObjectId: str,
             time: lambda v: v.isoformat(),
         }
+
+
+class TrackUpdate(BaseModel):
+    fileName: Optional[str]
+    trackName: Optional[str]
+    artistName: Optional[str]
+    cover: Optional[str]

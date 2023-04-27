@@ -3,7 +3,7 @@ const updateFlag = async (id, flagStatus) => {
     flagStatus = flagStatus === 'True'
 
     console.log('clicked')
-    fetch('/users', {
+    fetch('/users/updateFlag', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

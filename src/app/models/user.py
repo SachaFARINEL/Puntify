@@ -45,9 +45,9 @@ class User(BaseModel):
 class UserCreate(BaseModel):
     firstName: str
     lastName: str
-    email: str
-    passwd: str
-    passwConfirmation: str
+    email: str = None
+    passwd: str = None
+    passwConfirmation: str = None
 
 
 async def get_current_user(session_data: SessionData = Depends(verifier)):
@@ -66,14 +66,14 @@ async def get_current_user(session_data: SessionData = Depends(verifier)):
     except JWTError:
         raise credentials_exception
     user = await get_user(token_data.email)
-    #if user is None:
-     #   raise credentials_exception
+    if user is None:
+        raise credentials_exception
     return user
 
 
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
-    if not current_user["flag_status"]:
-        raise HTTPException(status_code=400, detail="Inactive user")
+    # if not current_user["flag_status"]:
+    #    raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 

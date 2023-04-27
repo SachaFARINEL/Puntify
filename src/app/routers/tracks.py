@@ -8,7 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from starlette.responses import JSONResponse, Response, StreamingResponse, HTMLResponse
 
-from ..models import User, Track
+from ..models import User, Track, TrackUpdate
 from ..models.user import get_current_active_user, is_admin
 from ..dependencies import templates
 from mutagen.mp3 import MP3
@@ -80,6 +80,7 @@ async def post_add_track(
 @router.post('/getDuration', response_description="Get the duration of a track")
 async def get_duration(file: UploadFile = File(...)):
     audio = MP3(file.file)
+
     return int(audio.info.length)
 
 
@@ -95,14 +96,6 @@ class ActionFavorite(BaseModel):
     action: str
 
 
-class Test(BaseModel):
-    tracks: list[str] = []
-
-    class Config:
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
-
-
 @router.put("/{track_id}/favorite", response_description="Add/remove track of favorites tracks users",
             dependencies=[Depends(cookie)])
 async def add_track_to_favorites_user(
@@ -110,17 +103,40 @@ async def add_track_to_favorites_user(
         current_user: Annotated[User, Depends(get_current_active_user)],
         action: ActionFavorite):
     if is_admin(current_user):
-        track = await db["tracks"].find_one({'_id': track_id})
 
+        track = await db["tracks"].find_one({'_id': track_id})
         if track is None:
             raise HTTPException(404, detail='track not found')
 
-        await db["user"].update_one(
+        operation = {}
+        if action.action == "add":
+            operation = {'$push': {'tracks': track['_id']}}
+
+        elif action.action == "remove":
+            operation = {'$pull': {'tracks': track['_id']}}
+        print(operation)
+        if operation is None:
+            raise HTTPException(status_code=500, detail='error while adding to favorites')
+
+        result = await db["user"].update_one(
             {'_id': current_user["_id"]},
-            {'$push': {'tracks': PyObjectId(track['_id'])}}
+            operation
         )
 
-        return 'ok'
+        if result.modified_count < 1:
+            raise HTTPException(status_code=500, detail='error while adding to favorites')
+
+    return 'ok'
+
+
+@router.get('/{track_id}/modal', dependencies=[Depends(cookie)])
+async def track_modal(track_id: str, req: Request, current_user: Annotated[User, Depends(is_admin)]):
+    track = await db["tracks"].find_one({'_id': track_id}, {'music': 0})
+    if track is None:
+        raise HTTPException(404, detail='track not found')
+
+    context = {'request': req, 'track': track}
+    return templates.TemplateResponse("admin/modalTrack.html", context)
 
 
 @router.get("/{track_id}", response_description="Get track", response_class=StreamingResponse)
@@ -132,6 +148,22 @@ async def get_tracks(track_id: str):
             yield track["music"]
 
     return StreamingResponse(music_stream(), headers={'Accept-Ranges': 'bytes'})
+
+
+@router.put("/{track_id}", response_description="Update track")
+async def update_tracks(track_id: str, updated_track: TrackUpdate):
+    track = {k: v for k, v in updated_track.dict().items() if v is not None}
+
+    if len(track) >= 1:
+        result = await db["tracks"].update_one(
+            {"_id": track_id},
+            {"$set": track}
+        )
+
+        if result.modified_count == 1:
+            return 'ok'
+
+    raise HTTPException(status_code=404, detail=f"Track {track_id} not found")
 
 
 class TrackId(BaseModel):

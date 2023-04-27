@@ -2,9 +2,9 @@ import html
 import os
 from datetime import timedelta
 from typing import Annotated
-from uuid import uuid4
+from uuid import uuid4, UUID
 
-from fastapi import APIRouter, Depends, Request, status, HTTPException
+from fastapi import APIRouter, Depends, Request, status, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse, RedirectResponse
 
@@ -48,3 +48,11 @@ async def post_login(request: Request, form_data: Annotated[OAuth2PasswordReques
         error = e.detail
         context = {'request': request, 'error': error}
         return templates.TemplateResponse("auth/login.html", context)
+
+
+@router.get('/logout', dependencies=[Depends(cookie)])
+async def logout(session_id: UUID = Depends(cookie)):
+    await backend.delete(session_id)
+    response = RedirectResponse(url='/', status_code=status.HTTP_303_SEE_OTHER)
+    cookie.delete_from_response(response)
+    return response

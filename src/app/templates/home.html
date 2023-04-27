@@ -25,7 +25,15 @@
                                 <p class="subtitle is-6">{{ track["artistName"] }}</p>
                                 <p class="subtitle is-6">{{ track["duration"] }}</p>
                             </div>
-                            <div class="fa-regular fa-star" style="color: #f5ff70;" onclick="changeFavorite(this, '{{ track["_id"] }}')" data-is-favorite=false></div>
+                            {% set ma_variable = "valeur de ma variable" %}
+                            {% if track["_id"] in current_user['tracks'] %}
+                                {% set star_icon = 'fa-solid' %}
+                                {% set is_favorite = true %}
+                            {% else %}
+                                {% set star_icon = 'fa-regular' %}
+                                {% set is_favorite = true %}
+                            {% endif %}
+                            <div class="{{ star_icon }} fa-star fa-xl" style="color: #00D1B2;" onclick="changeFavorite(this, '{{ track["_id"] }}')" data-is-favorite="{{ is_favorite }}"></div>
                         </div>
 
                         <div class="content">

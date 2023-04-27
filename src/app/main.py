@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request, HTTPException as StarletteHTTPException
+from fastapi import FastAPI, Request, status, HTTPException as StarletteHTTPException
 from fastapi.exception_handlers import http_exception_handler, request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import db
@@ -37,7 +37,12 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request, exc):
-    return await http_exception_handler(request, exc)
+    if exc.status_code == status.HTTP_401_UNAUTHORIZED:
+        return RedirectResponse(url='/auth/login')
+    if exc.status_code == status.HTTP_403_FORBIDDEN:
+        return RedirectResponse(url='/auth/login')
+    else:
+        return await http_exception_handler(request, exc)
 
 
 @app.exception_handler(RequestValidationError)
