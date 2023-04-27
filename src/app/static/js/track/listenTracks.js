@@ -9,9 +9,9 @@ let playerButtonIsEnabled = false
 const playerButtons = document.querySelectorAll('.player-button')
 playerButtons.forEach(playerButton => {
     playerButton.addEventListener('click', (e) => {
-        if(!playerButtonIsEnabled) enablePlayerButton()
+        if (!playerButtonIsEnabled) enablePlayerButton()
         const {trackId, trackDuration, trackName, trackArtist} = e.target.dataset
-        if(currentSong) {
+        if (currentSong) {
             currentSong.changeTrack(trackId, trackDuration)
         } else {
             currentSong = new Track(trackId, trackDuration)
@@ -27,7 +27,7 @@ document.getElementById('play-pause-button').addEventListener('click', ({target}
 
 const switchPlayPauseIcon = () => {
     const playStopButtonIcon = document.getElementById('play-pause-button-icon')
-    if(currentSong.state === 'play') {
+    if (currentSong.state === 'play') {
         playStopButtonIcon.classList.remove('fa-play')
         playStopButtonIcon.classList.add('fa-pause')
     } else {
@@ -109,19 +109,20 @@ class Track {
      * Démarre la lecture de la piste audio.
      */
     play() {
-        this.#track.play().then(() => {})
+        this.#track.play().then(() => {
+        })
     }
 
     /**
      * Initialise la barre de progression
      */
-    #startProgressBar(){
+    #startProgressBar() {
         const refreshBar = () => {
             const percent = Math.round(((this.#track.currentTime / this.#duration) * 100) * 10) / 10
             const progressBar = document.getElementById('track-progress-bar')
             progressBar.value = percent
             progressBar.innerText = `${percent}%`
-            if(percent >= 100) {
+            if (percent >= 100) {
                 this.stop()
                 clearInterval(this.#progressBarInterval)
             }
@@ -142,6 +143,8 @@ class Track {
     stop() {
         this.#state = 'pause'
         this.pause()
+        this.#track.src = ''
+        this.#track.load()
 
         const playStopButtonIcon = document.getElementById('play-pause-button-icon')
         playStopButtonIcon.classList.remove('fa-pause')
@@ -160,7 +163,7 @@ class Track {
         }
     }
 
-    get state () {
+    get state() {
         return this.#state
     }
 
