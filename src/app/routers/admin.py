@@ -13,7 +13,7 @@ from ..ressources.utils import duration_to_time, time_to_minutes
 router = APIRouter()
 
 
-@router.get('', dependencies=[Depends(cookie)], response_class=HTMLResponse)
+@router.get('', dependencies=[Depends(cookie)], response_class=HTMLResponse, response_description="Get Puntify dashboard")
 async def get_dashboard(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         users_count = await db["user"].count_documents({})

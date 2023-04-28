@@ -9,11 +9,11 @@
 {% endblock %}
 
 {% block section %}
-    <div class="container">
-        <section>
+    <div class="container" style="height: 100%">
+        <section style="height: 87%; overflow: scroll">
             <div class="b-table">
                 <div class="table-wrapper has-mobile-cards">
-                    <table id="users-table" class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                    <table id="users-table" class="table is-fullwidth is-striped is-hoverable">
                         <thead>
                         <tr>
                             <th>Track</th>
@@ -45,7 +45,7 @@
                                 <td class="is-actions-cell">
                                     <div class="buttons is-right">
                                         <button class="button is-small is-primary update-track" type="button">
-                                            <i class="fa-regular fa-circle-play fa-sm player-button"
+                                            <i class="fa-regular fa-circle-play fa-lg player-button"
                                                data-track-id="{{ track['_id'] }}"
                                                data-track-artist="{{ track['artistName'] }}"
                                                data-track-name="{{ track['trackName'] }}"
@@ -62,7 +62,7 @@
             </div>
         </section>
 
-        <section class="footer">
+        <footer class="footer" style="height: 10%">
             <div class="columns">
                 <div class="column is-one-fifth">
                     <button class="button is-rounded is-large" id="play-pause-button" disabled>
@@ -83,7 +83,7 @@
                     </button>
                 </div>
             </div>
-        </section>
+        </footer>
     </div>
 {% endblock %}
 

@@ -72,13 +72,13 @@ async def register(userCreate: UserCreate):
     return response
 
 
-@router.get("/profil", dependencies=[Depends(cookie)], response_class=HTMLResponse)
+@router.get("/profil", dependencies=[Depends(cookie)], response_class=HTMLResponse, response_description="Get profil page")
 async def get_profil(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     context = {"request": request, 'current_user': current_user, 'is_admin': current_user['admin']}
     return templates.TemplateResponse("user/profil.html", context)
 
 
-@router.get("/settings", dependencies=[Depends(cookie)], response_class=HTMLResponse)
+@router.get("/settings", dependencies=[Depends(cookie)], response_class=HTMLResponse, response_description="Get profil settings page")
 async def get_users_settings(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         users_list = await db["user"].find({}, {'password': 0}).to_list(10)
@@ -86,7 +86,7 @@ async def get_users_settings(request: Request, current_user: Annotated[User, Dep
         return templates.TemplateResponse("admin/usersSettings.html", context)
 
 
-@router.delete('', dependencies=[Depends(cookie)])
+@router.delete('', dependencies=[Depends(cookie)], response_description="Delete a user")
 async def delete_user(user: UserId, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         result = await db["user"].delete_one({"_id": user.id})
@@ -97,7 +97,7 @@ async def delete_user(user: UserId, current_user: Annotated[User, Depends(get_cu
         return {'deleted': True}
 
 
-@router.put('', dependencies=[Depends(cookie)])
+@router.put('', dependencies=[Depends(cookie)], response_description="Update a user")
 async def update(user: UserCreate, current_user: Annotated[User, Depends(get_current_active_user)]):
     if user.passwd != user.passwConfirmation:
         raise HTTPException(status_code=400, detail="Passwords do not match")
@@ -109,26 +109,23 @@ async def update(user: UserCreate, current_user: Annotated[User, Depends(get_cur
     if user.lastName != current_user['lastName']:
         fields_to_update["lastName"] = user.lastName
 
-    # if user.email != current_user['email']:
-    #     fields_to_update["email"] = user.email
-
     if user.passwd is not None and not pwd_context.verify(user.passwd, current_user['hashed_passwd']):
         fields_to_update["hashed_passwd"] = pwd_context.hash(html.escape(user.passwd))
 
     if fields_to_update:
-        result = await db["user"].update_one(
+        await db["user"].update_one(
             {"_id": current_user['_id']},
             {"$set": fields_to_update}
         )
     return user.passwd
 
 
-@router.put('/updateFlag', dependencies=[Depends(cookie)])
+@router.put('/updateFlag', dependencies=[Depends(cookie)], response_description="Modify user flag_status attribut")
 async def update_flag(user: UserFlag, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         new_flag_status = not user.flagStatus
 
-        result = await db["user"].update_one(
+        await db["user"].update_one(
             {"_id": user.id},
             {"$set": {"flag_status": new_flag_status}}
         )

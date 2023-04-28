@@ -16,7 +16,7 @@ from ..ressources.session import SessionData, backend, cookie
 router = APIRouter()
 
 
-@router.get("/login", response_class=HTMLResponse)
+@router.get("/login", response_class=HTMLResponse, response_description="Puntify connection page")
 async def get_login(request: Request):
     context = {"request": request}
     return templates.TemplateResponse("auth/login.html", context)
@@ -50,7 +50,7 @@ async def post_login(request: Request, form_data: Annotated[OAuth2PasswordReques
         return templates.TemplateResponse("auth/login.html", context)
 
 
-@router.get('/logout', dependencies=[Depends(cookie)])
+@router.get('/logout', dependencies=[Depends(cookie)], response_description="Puntify logout")
 async def logout(session_id: UUID = Depends(cookie)):
     await backend.delete(session_id)
     response = RedirectResponse(url='/', status_code=status.HTTP_303_SEE_OTHER)

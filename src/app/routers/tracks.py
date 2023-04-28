@@ -19,20 +19,20 @@ from ..ressources.utils import remove_prefix_zero, PyObjectId
 router = APIRouter()
 
 
-@router.post("/user", response_description="Add music to the user's favorites", response_model=User)
+@router.post("/user", dependencies=[Depends(cookie)], response_description="Add music to the user's favorites", response_model=User)
 async def add_favorite_track(current_user: Annotated[User, Depends(get_current_active_user)], track: Track = Body(...)):
     track = jsonable_encoder(track)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content="")
 
 
-@router.get("/add", dependencies=[Depends(cookie)], response_description="get add a track form")
+@router.get("/add", dependencies=[Depends(cookie)], response_description="Get a add track form")
 async def get_add_track_form(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         context = {'request': request, 'is_admin': current_user['admin']}
         return templates.TemplateResponse("admin/addTracks.html", context)
 
 
-@router.post("/add", dependencies=[Depends(cookie)], response_description="Add a track")
+@router.post("/add", dependencies=[Depends(cookie)], response_description="Add a track to the database")
 async def post_add_track(
         current_user: Annotated[User, Depends(get_current_active_user)],
         file: UploadFile = File(...),
@@ -77,14 +77,14 @@ async def post_add_track(
         return Response(content="Music has been successfully saved", status_code=200)
 
 
-@router.post('/getDuration', response_description="Get the duration of a track")
+@router.post('/getDuration', response_description="Get the duration of a track", dependencies=[Depends(cookie)])
 async def get_duration(file: UploadFile = File(...)):
     audio = MP3(file.file)
 
     return int(audio.info.length)
 
 
-@router.get('/settings', dependencies=[Depends(cookie)])
+@router.get('/settings', dependencies=[Depends(cookie)], response_description="Get tracks settings page")
 async def get_tracks_settings(request: Request, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         tracks_list = await db["tracks"].find({}, {'music': 0}).to_list(10)
@@ -114,7 +114,7 @@ async def add_track_to_favorites_user(
 
         elif action.action == "remove":
             operation = {'$pull': {'tracks': track['_id']}}
-        print(operation)
+
         if operation is None:
             raise HTTPException(status_code=500, detail='error while adding to favorites')
 
@@ -129,7 +129,7 @@ async def add_track_to_favorites_user(
     return 'ok'
 
 
-@router.get('/{track_id}/modal', dependencies=[Depends(cookie)])
+@router.get('/{track_id}/modal', dependencies=[Depends(cookie)], response_description="Get track modal settings")
 async def track_modal(track_id: str, req: Request, current_user: Annotated[User, Depends(is_admin)]):
     track = await db["tracks"].find_one({'_id': track_id}, {'music': 0})
     if track is None:
@@ -139,7 +139,7 @@ async def track_modal(track_id: str, req: Request, current_user: Annotated[User,
     return templates.TemplateResponse("admin/modalTrack.html", context)
 
 
-@router.get("/{track_id}", response_description="Get track", response_class=StreamingResponse)
+@router.get("/{track_id}", response_description="Get track stream", response_class=StreamingResponse, dependencies=[Depends(cookie)])
 async def get_tracks(track_id: str):
     track = await db["tracks"].find_one({"_id": html.escape(track_id)})
 
@@ -150,7 +150,7 @@ async def get_tracks(track_id: str):
     return StreamingResponse(music_stream(), headers={'Accept-Ranges': 'bytes'})
 
 
-@router.put("/{track_id}", response_description="Update track")
+@router.put("/{track_id}", response_description="Update track", dependencies=[Depends(cookie)])
 async def update_tracks(track_id: str, updated_track: TrackUpdate):
     track = {k: v for k, v in updated_track.dict().items() if v is not None}
 
@@ -170,7 +170,7 @@ class TrackId(BaseModel):
     id: str
 
 
-@router.delete('', dependencies=[Depends(cookie)])
+@router.delete('', dependencies=[Depends(cookie)], response_description="Delete a track")
 async def delete_user(track: TrackId, current_user: Annotated[User, Depends(get_current_active_user)]):
     if is_admin(current_user):
         result = await db["tracks"].delete_one({"_id": track.id})
